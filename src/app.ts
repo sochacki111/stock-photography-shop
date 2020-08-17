@@ -19,9 +19,10 @@ mongoose
   })
   .then(() => {
     /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
+    logger.debug('DB connected!');
   })
   .catch((err) => {
-    logger.debug(
+    logger.fatal(
       `MongoDB connection error. Please make sure MongoDB is running. ${err}`
     );
     process.exit();
