@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 
 import logger from './util/logger';
 import { MONGODB_URI } from './util/secrets';
+import * as PhotoController from './controllers/photo';
 
 // Create a new express app instance
 const app: express.Application = express();
@@ -32,6 +33,12 @@ mongoose
 app.set('port', process.env.PORT || 8080);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get('/photos', PhotoController.findAll);
+app.get('/photos/:id', PhotoController.findOne);
+app.post('/photos', PhotoController.createOne);
+app.patch('/photos/:id', PhotoController.updateOne);
+app.delete('/photos/:id', PhotoController.deleteOne);
 
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello World!');
