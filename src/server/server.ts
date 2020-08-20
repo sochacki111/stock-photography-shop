@@ -1,8 +1,9 @@
-import app from '../app';
 import { Server } from 'http';
+import logger from '../util/logger';
+import app from '../app';
 
-const server: Server = app.listen(3000, () => {
-  console.log('App is listening on port 3000!');
+const server: Server = app.listen(app.get('port'), () => {
+  logger.debug(`App is listening on port ${app.get('port')}!`);
 });
 
 export default server;
