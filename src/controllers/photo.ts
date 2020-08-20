@@ -11,7 +11,7 @@ export const findAll = async (
     const foundPhotos = await Photo.find({});
     logger.debug(`Found photos: ${foundPhotos}`);
 
-    res.send(foundPhotos);
+    res.status(200).send(foundPhotos);
   } catch (err) {
     res.send(err);
   }
@@ -26,7 +26,7 @@ export const findOne = async (
     const foundPhoto = await Photo.findById(req.params.id);
     logger.debug(`Found photos: ${foundPhoto}`);
 
-    res.send(foundPhoto);
+    res.status(200).send(foundPhoto);
   } catch (err) {
     res.send(err);
   }
@@ -56,7 +56,7 @@ export const updateOne = async (
     const updatedPhoto = await Photo.findByIdAndUpdate(req.params.id, req.body);
     logger.debug(`Updated photo: ${updatedPhoto}`);
 
-    res.send(updatedPhoto);
+    res.status(200).send(updatedPhoto);
   } catch (err) {
     res.send(err);
   }
@@ -71,7 +71,7 @@ export const deleteOne = async (
     const deletedPhoto = await Photo.deleteOne({ _id: req.params.id });
     logger.debug(`Deleted photo: ${deletedPhoto}`);
 
-    res.send(deletedPhoto);
+    res.status(200).send(deletedPhoto);
   } catch (err) {
     res.send(err);
   }
