@@ -6,14 +6,14 @@ export const findAll = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<Response> => {
   try {
     const foundPhotos = await Photo.find({});
     logger.debug(`Found photos: ${foundPhotos}`);
 
-    res.status(200).send(foundPhotos);
+    return res.status(200).send(foundPhotos);
   } catch (err) {
-    res.send(err);
+    return res.send(err);
   }
 };
 

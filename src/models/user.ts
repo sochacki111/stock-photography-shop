@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, HookNextFunction, model } from 'mongoose';
+import { Schema, Document, HookNextFunction, model } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 export interface IUser extends Document {
