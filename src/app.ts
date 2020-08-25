@@ -2,13 +2,13 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import passport from 'passport';
-import passportMiddleware from './middlewares/passport';
-
+import passportMiddleware from './config/passport';
 import logger from './util/logger';
+
 import { MONGODB_URI } from './util/secrets';
-import * as PhotoController from './controllers/photo.controller';
 import authRoutes from './routes/auth.routes';
 import specialRoutes from './routes/special.routes';
+import photoRoutes from './routes/photo.routes';
 
 // Create a new express app instance
 const app: express.Application = express();
@@ -43,29 +43,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
-app.get('/photos', PhotoController.findAll);
-app.get('/photos/:id', PhotoController.findOne);
-app.post(
-  '/photos',
-  passport.authenticate('jwt', { session: false }),
-  PhotoController.createOne
-);
-app.patch(
-  '/photos/:id',
-  passport.authenticate('jwt', { session: false }),
-  PhotoController.updateOne
-);
-app.delete(
-  '/photos/:id',
-  passport.authenticate('jwt', { session: false }),
-  PhotoController.deleteOne
-);
-
+app.use(authRoutes);
+app.use(specialRoutes);
+app.use(photoRoutes);
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello World!');
 });
-
-app.use(authRoutes);
-app.use(specialRoutes);
 
 export default app;
