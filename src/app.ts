@@ -1,10 +1,13 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
-
+import passport from 'passport';
+import passportMiddleware from './config/passport';
 import logger from './util/logger';
+
 import { MONGODB_URI } from './util/secrets';
-import * as PhotoController from './controllers/photo';
+import authRoutes from './routes/auth.routes';
+import photoRoutes from './routes/photo.routes';
 
 // Create a new express app instance
 const app: express.Application = express();
@@ -29,17 +32,20 @@ mongoose
     process.exit();
   });
 
+// Middlewares
+app.use(passport.initialize());
+
+// Configure passport
+passport.use(passportMiddleware);
+
 // Express configuration
 app.set('port', process.env.PORT || 8080);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/photos', PhotoController.findAll);
-app.get('/photos/:id', PhotoController.findOne);
-app.post('/photos', PhotoController.createOne);
-app.patch('/photos/:id', PhotoController.updateOne);
-app.delete('/photos/:id', PhotoController.deleteOne);
-
+// Routes
+app.use(authRoutes);
+app.use(photoRoutes);
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello World!');
 });

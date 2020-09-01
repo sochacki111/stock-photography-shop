@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface PhotoInterface extends Document {
+export interface IPhoto extends Document {
   title: string;
   author: string;
   keywords: string[];
@@ -14,6 +14,6 @@ const PhotoSchema: Schema = new Schema({
   url: { type: String, required: true }
 });
 
-const Photo = mongoose.model<PhotoInterface>('Photo', PhotoSchema);
+const Photo = mongoose.model<IPhoto>('Photo', PhotoSchema);
 
 export default Photo;
