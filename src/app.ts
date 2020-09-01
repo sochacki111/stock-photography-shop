@@ -7,7 +7,6 @@ import logger from './util/logger';
 
 import { MONGODB_URI } from './util/secrets';
 import authRoutes from './routes/auth.routes';
-import specialRoutes from './routes/special.routes';
 import photoRoutes from './routes/photo.routes';
 
 // Create a new express app instance
@@ -35,6 +34,8 @@ mongoose
 
 // Middlewares
 app.use(passport.initialize());
+
+// Configure passport
 passport.use(passportMiddleware);
 
 // Express configuration
@@ -44,7 +45,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
 app.use(authRoutes);
-app.use(specialRoutes);
 app.use(photoRoutes);
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello World!');
