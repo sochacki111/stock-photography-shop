@@ -35,6 +35,8 @@ mongoose
 
 // Middlewares
 app.use(passport.initialize());
+
+// Configure passport
 passport.use(passportMiddleware);
 
 // Express configuration
