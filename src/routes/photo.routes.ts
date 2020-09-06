@@ -9,15 +9,7 @@ const router = Router();
 router.get('/photos', jwtAuth, PhotoController.findAll);
 router.get('/photos/:id', PhotoController.findOne);
 router.post('/photos', jwtAuth, PhotoController.createOne);
-router.patch(
-  '/photos/:id',
-  passport.authenticate('jwt', { session: false }),
-  PhotoController.updateOne
-);
-router.delete(
-  '/photos/:id',
-  passport.authenticate('jwt', { session: false }),
-  PhotoController.deleteOne
-);
+router.patch('/photos/:id', jwtAuth, PhotoController.updateOne);
+router.delete('/photos/:id', jwtAuth, PhotoController.deleteOne);
 
 export default router;
