@@ -10,7 +10,7 @@ export interface IPhoto extends Document {
 const PhotoSchema: Schema = new Schema({
   title: { type: String, required: true },
   author: { type: String, required: true },
-  keywords: { type: [String], required: true },
+  keywords: { type: [String] },
   url: { type: String, required: true }
 });
 

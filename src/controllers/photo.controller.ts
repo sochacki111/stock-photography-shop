@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
+import { PutObjectRequest } from 'aws-sdk/clients/s3';
 import Photo from '../models/photo';
 import logger from '../util/logger';
+import s3 from '../config/s3.config';
 
 export const findAll = async (
   req: Request,
@@ -38,7 +40,26 @@ export const createOne = async (
   next: NextFunction
 ): Promise<Response> => {
   try {
-    const createdPhoto = await Photo.create(req.body);
+    const originalFileName = req.file.originalname;
+
+    const params: PutObjectRequest = {
+      Bucket: String(process.env.AWS_BUCKET_NAME),
+      // Key: `${uuidv4()}.${fileType}`,
+      Key: `photos/${originalFileName}`,
+      Body: req.file.buffer,
+      ACL: 'public-read'
+    };
+
+    const uploadedData = await s3.upload(params).promise();
+
+    const photoToCreate = {
+      title: req.body.title,
+      author: req.body.author,
+      keywords: req.body.keywords,
+      url: uploadedData.Location
+    };
+
+    const createdPhoto = await Photo.create(photoToCreate);
     logger.debug(`Created photo: ${createdPhoto}`);
 
     return res.status(201).send(createdPhoto);
