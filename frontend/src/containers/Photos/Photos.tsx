@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import { Photo } from '../../components/Photo/Photo';
+import './Photos.css';
 
 class Photos extends Component {
   state = {
@@ -16,7 +17,11 @@ class Photos extends Component {
         <Photo key={photo._id} title={photo.title} author={photo.author} />
       );
     });
-    return <div>{photos}</div>;
+    return (
+      <div>
+        <section className="Photos">{photos}</section>
+      </div>
+    );
   }
 }
 
