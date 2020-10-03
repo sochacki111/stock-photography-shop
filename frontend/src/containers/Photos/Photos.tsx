@@ -12,6 +12,7 @@ interface Photo {
   author: string;
   keywords: string[];
   url: string;
+  price: number;
 }
 
 interface IState {
@@ -20,12 +21,7 @@ interface IState {
 }
 
 class Photos extends Component<IProps, IState> {
-  // useless constructor
-  // constructor(props: IProps) {
-  //   super(props);
-  // }
-
-  state = {
+  state: IState = {
     photos: [],
     error: false
   };
@@ -36,7 +32,6 @@ class Photos extends Component<IProps, IState> {
       .then((response) => {
         const photos = response.data;
         this.setState({ photos: photos });
-        console.log(photos);
       })
       .catch((error) => {
         console.log(error);
@@ -45,6 +40,7 @@ class Photos extends Component<IProps, IState> {
   }
 
   render() {
+    // TODO Add error message while server is not responding
     // let photos = <p style={{ textAlign: 'center' }}>Something went wrong!</p>;
     // if (!this.state.error) {
     //   photos = this.state.photos.map((photo) => {
@@ -60,6 +56,7 @@ class Photos extends Component<IProps, IState> {
           title={photo.title}
           author={photo.author}
           url={photo.url}
+          price={photo.price}
         />
       );
     });

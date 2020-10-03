@@ -5,6 +5,7 @@ export interface IPhoto extends Document {
   author: string;
   keywords: string[];
   url: string;
+  price: number;
 }
 
 const PhotoSchema: Schema = new Schema(
@@ -12,7 +13,8 @@ const PhotoSchema: Schema = new Schema(
     title: { type: String, required: true },
     author: { type: String, required: true },
     keywords: { type: [String] },
-    url: { type: String, required: true }
+    url: { type: String, required: true },
+    price: { type: Number, required: true }
   },
   {
     timestamps: true // created_at / updated_at

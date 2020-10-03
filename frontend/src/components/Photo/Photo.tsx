@@ -7,6 +7,7 @@ interface Props {
   author: string;
   keywords?: string[];
   url: string;
+  price: number;
 }
 
 export const Photo: React.FC<Props> = (props) => {
@@ -15,11 +16,14 @@ export const Photo: React.FC<Props> = (props) => {
       <img
         src={props.url}
         alt="thumbnail of photography to buy"
-        // width="500"
-        // height="600"
+        width="100"
+        height="100"
       />
-      <h1>{props.author}</h1>
-      <h1>{props.title}</h1>
+      <h4>Author: </h4>
+      {props.author}
+      <h4>Title: </h4>
+      {props.title}
+      <h4>Price: </h4>${props.price}
     </article>
   );
 };

@@ -40,6 +40,7 @@ export const createOne = async (
   next: NextFunction
 ): Promise<Response> => {
   try {
+    // This comes from multer
     const originalFileName = req.file.originalname;
 
     const params: PutObjectRequest = {
@@ -56,7 +57,8 @@ export const createOne = async (
       title: req.body.title,
       author: req.body.author,
       keywords: req.body.keywords,
-      url: uploadedData.Location
+      url: uploadedData.Location,
+      price: req.body.price
     };
 
     const createdPhoto = await Photo.create(photoToCreate);
