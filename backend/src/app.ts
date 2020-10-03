@@ -2,9 +2,10 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import passport from 'passport';
+import cors from 'cors';
+
 import passportMiddleware from './config/passport';
 import logger from './util/logger';
-
 import { MONGODB_URI } from './util/secrets';
 import authRoutes from './routes/auth.routes';
 import photoRoutes from './routes/photo.routes';
@@ -33,6 +34,7 @@ mongoose
   });
 
 // Middlewares
+app.use(cors());
 app.use(passport.initialize());
 
 // Configure passport
