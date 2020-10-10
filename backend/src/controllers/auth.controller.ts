@@ -47,7 +47,9 @@ export const signIn = async (
 
   const isMatch = await user.comparePassword(req.body.password);
   if (isMatch) {
-    return res.status(200).json({ token: createToken(user) });
+    return res
+      .status(200)
+      .json({ idToken: createToken(user), localId: user._id });
   }
 
   return res.status(400).json({
