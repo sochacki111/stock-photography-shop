@@ -9,11 +9,13 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import authReducer from './store/reducers/auth';
+import addPhotoReducer from './store/reducers/addPhoto';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const rootReducer = combineReducers({
-  auth: authReducer
+  auth: authReducer,
+  addPhoto: addPhotoReducer
 });
 
 const store = createStore(

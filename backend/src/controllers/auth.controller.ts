@@ -3,10 +3,13 @@ import jwt from 'jsonwebtoken';
 import User, { IUser } from '../models/user';
 import config from '../config/config';
 
+// TODO Set in env
+const TOKEN_TIMEOUT: number = 3600;
+
 function createToken(user: IUser) {
   // TODO check if email is necessary here
   return jwt.sign({ id: user.id, email: user.email }, config.jwtSecret, {
-    expiresIn: 86400
+    expiresIn: TOKEN_TIMEOUT
   });
 }
 
@@ -18,7 +21,7 @@ export const signUp = async (
     return (
       res
         .status(400)
-        // TODO Refactor return message to be not redundant
+        // TODO Refactor return message to be not redundant. Extract to different module
         .json({ error: { message: 'Please. Send your email and password' } })
     );
   }
@@ -55,9 +58,11 @@ export const signIn = async (
 
   const isMatch = await user.comparePassword(req.body.password);
   if (isMatch) {
-    return res
-      .status(200)
-      .json({ idToken: createToken(user), localId: user._id });
+    return res.status(200).json({
+      idToken: createToken(user),
+      localId: user._id,
+      expiresIn: TOKEN_TIMEOUT
+    });
   }
 
   return res.status(400).json({

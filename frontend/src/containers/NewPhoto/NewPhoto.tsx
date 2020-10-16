@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import { connect } from 'react-redux';
 
-interface IProps {}
+import axios from 'axios';
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
+import * as actions from '../../store/actions/index';
+
+interface IProps {
+  token: string;
+  onAddPhoto: (photoData: any, token: any) => any
+}
 
 interface IState {
   selectedFile: File | null;
@@ -34,16 +41,21 @@ class NewPhoto extends Component<IProps, IState> {
       fd.append('title', this.state.title);
       fd.append('price', String(this.state.price));
 
+      const photo = {
+        photoData: fd
+      }
       // TODO Display progress of upload to the user
-      const res = await axios.post('http://localhost:8080/photos', fd, {
-        onUploadProgress: (progressEvent) => {
-          console.log(
-            'Upload Progress: ' +
-              Math.round((progressEvent.loaded / progressEvent.total) * 100) +
-              '%'
-          );
-        }
-      });
+      // const res = await axios.post('http://localhost:8080/photos', fd, {
+      //   onUploadProgress: (progressEvent) => {
+      //     console.log(
+      //       'Upload Progress: ' +
+      //         Math.round((progressEvent.loaded / progressEvent.total) * 100) +
+      //         '%'
+      //     );
+      //   }
+      // });
+
+      await this.props.onAddPhoto(photo, this.props.token);
     }
   };
 
@@ -87,4 +99,20 @@ class NewPhoto extends Component<IProps, IState> {
   }
 }
 
-export default NewPhoto;
+const mapStateToProps = (state: any) => {
+  return {
+      // receivedProp: stateFromRedux
+      loading: state.addPhoto.loading,
+      token: state.auth.token
+  }
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+      onAddPhoto: (photoData: any, token: any) => dispatch(actions.addPhoto(photoData, token))
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(NewPhoto, axios));
+
+// export default NewPhoto;
