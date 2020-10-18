@@ -3,10 +3,13 @@ import jwt from 'jsonwebtoken';
 import User, { IUser } from '../models/user';
 import config from '../config/config';
 
+// TODO Set in env
+const TOKEN_TIMEOUT: number = 3600;
+
 function createToken(user: IUser) {
   // TODO check if email is necessary here
   return jwt.sign({ id: user.id, email: user.email }, config.jwtSecret, {
-    expiresIn: 86400
+    expiresIn: TOKEN_TIMEOUT
   });
 }
 
@@ -15,14 +18,19 @@ export const signUp = async (
   res: Response
 ): Promise<Response> => {
   if (!req.body.email || !req.body.password) {
-    return res
-      .status(400)
-      .json({ msg: 'Please. Send your email and password' });
+    return (
+      res
+        .status(400)
+        // TODO Refactor return message to be not redundant. Extract to different module
+        .json({ error: { message: 'Please. Send your email and password' } })
+    );
   }
 
   const user = await User.findOne({ email: req.body.email });
   if (user) {
-    return res.status(400).json({ msg: 'The User already Exists' });
+    return res
+      .status(400)
+      .json({ error: { message: 'The User already Exists' } });
   }
 
   const newUser = new User(req.body);
@@ -37,20 +45,29 @@ export const signIn = async (
   if (!req.body.email || !req.body.password) {
     return res
       .status(400)
-      .json({ msg: 'Please. Send your email and password' });
+      .json({ error: { message: 'Please. Send your email and password' } });
   }
 
   const user = await User.findOne({ email: req.body.email });
+  console.log(user?.toJSON());
   if (!user) {
-    return res.status(400).json({ msg: 'The User does not exists' });
+    return res
+      .status(400)
+      .json({ error: { message: 'The User does not exists' } });
   }
 
   const isMatch = await user.comparePassword(req.body.password);
   if (isMatch) {
-    return res.status(200).json({ token: createToken(user) });
+    return res.status(200).json({
+      idToken: createToken(user),
+      localId: user._id,
+      expiresIn: TOKEN_TIMEOUT
+    });
   }
 
   return res.status(400).json({
-    msg: 'The email or password are incorrect'
+    error: {
+      message: 'The email or password are incorrect'
+    }
   });
 };
