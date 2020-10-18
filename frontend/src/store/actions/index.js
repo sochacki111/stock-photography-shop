@@ -1,5 +1,6 @@
 export {
-    auth
+    auth,
+    logout
 } from './auth';
 export {
     addPhoto,
