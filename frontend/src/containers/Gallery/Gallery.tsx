@@ -1,11 +1,25 @@
 import React, { Component } from 'react';
-import { Route, NavLink, Switch, Redirect } from 'react-router-dom';
+import { Route, RouteComponentProps, Switch, Redirect } from 'react-router-dom';
 
-// TODO Gallery as Photos container
-class Gallery extends Component {
+import Photos from '../Photos/Photos';
+import FullPhoto from '../FullPhoto/FullPhoto';
+
+interface IProps extends RouteComponentProps {
+}
+
+interface IState {
+
+}
+
+class Gallery extends Component<IProps, IState> {
   render() {
     return (
       <div className="Gallery">
+        <Switch>
+          <Route path={this.props.match.url + '/:id'} exact component={FullPhoto} />
+          <Route path="/" component={Photos} />
+        </Switch>
+
         {/* <header>
           <nav>
             <ul>
@@ -28,3 +42,5 @@ class Gallery extends Component {
     );
   }
 }
+
+export default Gallery;
