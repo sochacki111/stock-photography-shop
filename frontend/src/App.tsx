@@ -2,11 +2,11 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import './App.css';
-import Photos from './containers/Photos/Photos';
 import NewPhoto from './containers/NewPhoto/NewPhoto';
 import Auth from './containers/Auth/Auth';
 import Logout from './containers/Auth/Logout/Logout';
 import Layout from './hoc/Layout/Layout';
+import Gallery from './containers/Gallery/Gallery';
 
 const App: React.FC = () => {
   return (
@@ -15,7 +15,7 @@ const App: React.FC = () => {
         <Switch>
           <Route path="/auth" component={Auth} />
           <Route path="/logout" component={Logout} />
-          <Route path="/photos" component={Photos} />
+          <Route path="/photos" component={Gallery} />
           <Route path="/new-photo" component={NewPhoto} />
         </Switch>
       </Layout>
