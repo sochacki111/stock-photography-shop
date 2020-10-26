@@ -4,5 +4,6 @@ export {
 } from './auth';
 export {
     addPhoto,
-    addPhotoInit
+    addPhotoInit,
+    purchasePhoto
 } from './addPhoto';

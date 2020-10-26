@@ -7,3 +7,4 @@ export const ADD_PHOTO_START = 'ADD_PHOTO_START';
 export const ADD_PHOTO_SUCCESS = 'ADD_PHOTO_SUCCESS';
 export const ADD_PHOTO_FAIL = 'ADD_PHOTO_FAIL';
 export const ADD_PHOTO_INIT = 'ADD_PHOTO_INIT';
+export const PURCHASE_PHOTO = 'PURCHASE_PHOTO';

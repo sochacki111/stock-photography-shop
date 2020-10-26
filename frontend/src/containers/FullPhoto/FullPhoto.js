@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import axios from 'axios';
 
 import './FullPhoto.module.css';
-
+import * as actions from '../../store/actions/index';
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 class FullPhoto extends Component {
   state = {
     loadedPhoto: null
@@ -71,4 +73,11 @@ class FullPhoto extends Component {
   }
 }
 
-export default FullPhoto;
+const mapDispatchToProps = dispatch => {
+  return {
+    onPurchasePhoto: (orderData, token) => dispatch(actions.purchasePhoto(orderData, token))
+  };
+};
+
+// export default FullPhoto;
+export default connect(null, mapDispatchToProps)(withErrorHandler(FullPhoto, axios));

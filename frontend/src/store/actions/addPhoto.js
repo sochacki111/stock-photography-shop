@@ -22,6 +22,12 @@ export const addPhotoStart = () => {
   };
 };
 
+export const purchasePhoto = () => {
+  return {
+    type: actionTypes.ADD_PHOTO_START
+  };
+}
+
 export const addPhoto = (photoData, token) => {
   return dispatch => {
     dispatch(addPhotoStart());

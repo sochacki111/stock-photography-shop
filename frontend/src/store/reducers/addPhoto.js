@@ -4,7 +4,8 @@ import { updateObject } from '../utility';
 const initialState = {
   photos: [],
   loading: false,
-  added: false
+  added: false,
+  purchased: false
 };
 
 const addPhotoInit = (state, action) => {
@@ -30,12 +31,17 @@ const addPhotoFail = (state, action) => {
   return updateObject(state, { loading: false });
 };
 
+const purchasePhotoSuccess = (state, action) => {
+  return updateObject(state, { purchased: true });
+};
+
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.ADD_PHOTO_INIT: return addPhotoInit(state, action);
     case actionTypes.ADD_PHOTO_START: return addPhotoStart(state, action);
     case actionTypes.ADD_PHOTO_SUCCESS: return addPhotoSuccess(state, action);
     case actionTypes.ADD_PHOTO_FAIL: return addPhotoFail(state, action);
+    case actionTypes.PURCHASE_PHOTO: return purchasePhotoSuccess(state, action);
     default: return state;
   }
 };
