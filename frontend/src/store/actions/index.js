@@ -4,5 +4,7 @@ export {
 } from './auth';
 export {
     addPhoto,
-    addPhotoInit
-} from './addPhoto';
+    addPhotoInit,
+    purchasePhoto,
+    fetchPhoto
+} from './photo';

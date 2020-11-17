@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import { RouteComponentProps, Switch, Route } from 'react-router-dom';
+import { RouteComponentProps, Switch, Route, Link } from 'react-router-dom';
 
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import { Photo } from '../../components/Photo/Photo';
@@ -35,32 +35,34 @@ class Photos extends Component<IProps, IState> {
 
   componentDidMount() {
     axios
-    .get('http://localhost:8080/photos')
+      .get('http://localhost:8080/photos')
       .then((response) => {
         const photos = response.data;
         this.setState({ photos: photos });
+        console.log(photos);
       })
       .catch((error) => {
         console.log(error);
         this.setState({ error: true });
       });
-    }
-    
-    // purchaseConfirmedHandler = () => {
-    //   if (this.props.isAuthenticated) {
-    //       this.setState( { purchasing: true } );
-    //   } 
-    //   // else {
-    //   //     this.props.onSetAuthRedirectPath('/checkout');
-    //   //     this.props.history.push('/auth');
-    //   // }
-    // }
+    console.log(process.env.REACT_APP_KEY);
+  }
 
-    postSelectedHandler = (photoId: string) => {
-      this.props.history.push( '/photos/' + photoId );
-    }
+  // purchaseConfirmedHandler = () => {
+  //   if (this.props.isAuthenticated) {
+  //       this.setState( { purchasing: true } );
+  //   }
+  //   // else {
+  //   //     this.props.onSetAuthRedirectPath('/checkout');
+  //   //     this.props.history.push('/auth');
+  //   // }
+  // }
 
-    render() {
+  postSelectedHandler = (photoId: string) => {
+    this.props.history.push('/photos/' + photoId);
+  };
+
+  render() {
     // TODO Add error message while server is not responding
     // let photos = <p style={{ textAlign: 'center' }}>Something went wrong!</p>;
     // if (!this.state.error) {
@@ -72,37 +74,35 @@ class Photos extends Component<IProps, IState> {
     // }
     const photos: JSX.Element[] = this.state.photos.map((photo: Photo) => {
       return (
-        <Photo
-          key={photo._id}
-          title={photo.title}
-          author={photo.author}
-          url={photo.url}
-          price={photo.price}
-          // purchaseConfirmed={this.purchaseConfirmedHandler}
-          clicked={() => this.postSelectedHandler( photo._id )}
-        />
+        <Link to={'/photos/' + photo._id} key={photo._id}>
+          <Photo
+            title={photo.title}
+            author={photo.author}
+            url={photo.url}
+            price={photo.price}
+            // purchaseConfirmed={this.purchaseConfirmedHandler}
+            // clicked={() => this.postSelectedHandler( photo._id )}
+          ></Photo>
+        </Link>
       );
     });
 
     return (
-      // <div>
-      //   <Switch>
-          <section className="Photos">{photos}</section>
-          // <Route path={this.props.match.url + '/:id'} exact component={FullPost} />
-      //   </Switch>
-      // </div>
+      <div>
+        <section className="Photos">{photos}</section>
+      </div>
     );
   }
 }
 
 const mapStateToProps = (state: any) => {
   return {
-      // ings: state.burgerBuilder.ingredients,
-      // price: state.burgerBuilder.totalPrice,
-      // error: state.burgerBuilder.error,
-      isAuthenticated: state.auth.token !== null
+    // ings: state.burgerBuilder.ingredients,
+    // price: state.burgerBuilder.totalPrice,
+    // error: state.burgerBuilder.error,
+    isAuthenticated: state.auth.token !== null
   };
-}
+};
 
 // const mapDispatchToProps = dispatch => {
 //   return {
@@ -111,4 +111,4 @@ const mapStateToProps = (state: any) => {
 // };
 
 // export default Photos;
-export default connect(mapStateToProps, null)(withErrorHandler( Photos, axios ));
+export default connect(mapStateToProps, null)(withErrorHandler(Photos, axios));

@@ -1,5 +1,37 @@
 import * as actionTypes from './actionTypes';
-import axios from '../../axios-addPhoto';
+import axios from '../../axios-photos';
+
+export const fetchPhotoSuccess = (photo) => {
+  return {
+    type: actionTypes.FETCH_PHOTO_SUCCESS,
+    photo: photo
+  };
+};
+
+export const fetchPhotoFail = (error) => {
+  return {
+    type: actionTypes.FETCH_PHOTO_FAIL,
+    error: error
+  };
+};
+
+export const fetchPhotoStart = () => {
+  return {
+    type: actionTypes.FETCH_PHOTO_START
+  };
+};
+
+export const fetchPhoto = (photoId) => {
+  return dispatch => {
+    axios.get('http://localhost:8080/photos/' + photoId)
+      .then(res => {
+        dispatch(fetchPhotoSuccess(res.data));
+      })
+      .catch(err => {
+        dispatch(fetchPhotoFail(err));
+      });
+  };
+};
 
 export const addPhotoSuccess = (id, photoData) => {
   return {
@@ -22,6 +54,12 @@ export const addPhotoStart = () => {
   };
 };
 
+export const purchasePhoto = () => {
+  return {
+    type: actionTypes.ADD_PHOTO_START
+  };
+}
+
 export const addPhoto = (photoData, token) => {
   return dispatch => {
     dispatch(addPhotoStart());
@@ -30,7 +68,6 @@ export const addPhoto = (photoData, token) => {
     };
     axios.post('/photos', photoData, config)
       .then(response => {
-        console.log(response.data);
         dispatch(addPhotoSuccess(response.data._id, photoData));
       })
       .catch(error => {
