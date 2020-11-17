@@ -6,7 +6,8 @@ import NewPhoto from './containers/NewPhoto/NewPhoto';
 import Auth from './containers/Auth/Auth';
 import Logout from './containers/Auth/Logout/Logout';
 import Layout from './hoc/Layout/Layout';
-import Gallery from './containers/Gallery/Gallery';
+import Photos from './containers/Photos/Photos';
+import FullPhoto from './containers/FullPhoto/FullPhoto';
 
 const App: React.FC = () => {
   return (
@@ -15,12 +16,11 @@ const App: React.FC = () => {
         <Switch>
           <Route path="/auth" component={Auth} />
           <Route path="/logout" component={Logout} />
-          <Route path="/photos" component={Gallery} />
           <Route path="/new-photo" component={NewPhoto} />
+          <Route path="/photos/:id" component={FullPhoto} />
+          <Route path="/" component={Photos} />
         </Switch>
       </Layout>
-      {/* <NewPhoto /> */}
-      {/* <Photos /> */}
     </div>
   );
 };

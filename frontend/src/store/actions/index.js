@@ -5,5 +5,6 @@ export {
 export {
     addPhoto,
     addPhotoInit,
-    purchasePhoto
-} from './addPhoto';
+    purchasePhoto,
+    fetchPhoto
+} from './photo';

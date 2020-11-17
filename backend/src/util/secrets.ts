@@ -1,6 +1,7 @@
 import fs from 'fs';
 import dotenv from 'dotenv';
 import logger from './logger';
+import Stripe from 'stripe';
 
 if (fs.existsSync('.env')) {
   logger.debug('Using .env file to supply config environment variables');
@@ -30,3 +31,7 @@ if (!MONGODB_URI) {
   }
   process.exit(1);
 }
+
+export const STRIPE_SECRET_ACCESS_KEY = String(
+  process.env.STRIPE_SECRET_ACCESS_KEY
+);

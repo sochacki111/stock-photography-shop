@@ -3,10 +3,12 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import passport from 'passport';
 import cors from 'cors';
+import Stripe from 'stripe';
+import { v4 as uuidv4 } from 'uuid';
 
 import passportMiddleware from './config/passport';
 import logger from './util/logger';
-import { MONGODB_URI } from './util/secrets';
+import { MONGODB_URI, STRIPE_SECRET_ACCESS_KEY } from './util/secrets';
 import authRoutes from './routes/auth.routes';
 import photoRoutes from './routes/photo.routes';
 
@@ -23,7 +25,6 @@ mongoose
     useUnifiedTopology: true
   })
   .then(() => {
-    /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
     logger.debug('DB connected!');
   })
   .catch((err) => {
@@ -37,7 +38,7 @@ mongoose
 app.use(cors());
 app.use(passport.initialize());
 
-// Configure passport
+// Passport configuration
 passport.use(passportMiddleware);
 
 // Express configuration
@@ -45,11 +46,41 @@ app.set('port', process.env.PORT || 8080);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Stripe configuration
+const stripe = new Stripe(STRIPE_SECRET_ACCESS_KEY, {
+  apiVersion: '2020-08-27'
+});
+
 // Routes
 app.use(authRoutes);
 app.use(photoRoutes);
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello World!');
+});
+
+const YOUR_DOMAIN = 'http://localhost:3000/checkout';
+
+app.post('/create-session', async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: [
+      {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: req.body.photo.title,
+            images: [req.body.photo.url]
+          },
+          unit_amount: req.body.photo.price * 100
+        },
+        quantity: 1
+      }
+    ],
+    mode: 'payment',
+    success_url: `${YOUR_DOMAIN}?success=true`,
+    cancel_url: `${YOUR_DOMAIN}?canceled=true`
+  });
+  res.json({ id: session.id });
 });
 
 export default app;
