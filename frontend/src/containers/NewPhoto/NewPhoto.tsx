@@ -35,7 +35,10 @@ class NewPhoto extends Component<IProps, IState> {
     }
   };
 
-  fileUploadHandler = async () => {
+  fileUploadHandler = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
     const fd: FormData = new FormData();
     if (this.state.selectedFile !== null) {
       fd.append('image', this.state.selectedFile, this.state.selectedFile.name);
