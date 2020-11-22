@@ -9,9 +9,30 @@ export const findAll = async (
   res: Response,
   next: NextFunction
 ): Promise<Response> => {
+  const category = req.query.category
+    ? { category: String(req.query.category) }
+    : {};
+  const searchKeyword = req.query.searchKeyword
+    ? {
+        title: {
+          $regex: String(req.query.searchKeyword),
+          $options: 'i'
+        }
+      }
+    : {};
+  const sortOrder = req.query.sortOrder
+    ? req.query.sortOrder === 'lowest'
+      ? { price: 1 }
+      : { price: -1 }
+    : { _id: -1 };
   try {
-    const foundPhotos = await Photo.find({});
-    logger.debug(`Found photos: ${foundPhotos}`);
+    const foundPhotos = await Photo.find({
+      ...category,
+      ...searchKeyword
+    }).sort(sortOrder);
+    logger.debug(
+      `Found photos: ${foundPhotos} category: ${req.query.category} searchKeyword: ${req.query.searchKeyword} sortOrder: ${req.query.sortOrder}`
+    );
 
     return res.status(200).send(foundPhotos);
   } catch (err) {
@@ -57,6 +78,7 @@ export const createOne = async (
       title: req.body.title,
       author: req.body.author,
       keywords: req.body.keywords,
+      category: req.body.category,
       url: uploadedData.Location,
       price: req.body.price
     };

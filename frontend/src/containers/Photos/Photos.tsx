@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import { RouteComponentProps, Switch, Route, Link } from 'react-router-dom';
+import { RouteComponentProps, Link } from 'react-router-dom';
 
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import { Photo } from '../../components/Photo/Photo';
@@ -9,6 +9,8 @@ import './Photos.css';
 
 interface IProps extends RouteComponentProps {
   isAuthenticated: boolean;
+  // TODO refactor
+  match: any;
 }
 
 interface Photo {
@@ -24,43 +26,64 @@ interface IState {
   photos: Photo[];
   error: string | boolean;
   purchasing: boolean;
+  category: string;
+  searchKeyword: string;
+  sortOrder: string;
 }
 
 class Photos extends Component<IProps, IState> {
   state: IState = {
     photos: [],
     error: false,
-    purchasing: false
+    category: this.props.match.params.id ? this.props.match.params.id : '',
+    searchKeyword: '',
+    sortOrder: '',
+    purchasing: false // TODO delete
   };
 
   componentDidMount() {
-    axios
-      .get('http://localhost:8080/photos')
-      .then((response) => {
-        const photos = response.data;
-        this.setState({ photos: photos });
-        console.log(photos);
-      })
-      .catch((error) => {
-        console.log(error);
-        this.setState({ error: true });
-      });
-    console.log(process.env.REACT_APP_KEY);
+    this.fetchPhotos();
   }
 
-  // purchaseConfirmedHandler = () => {
-  //   if (this.props.isAuthenticated) {
-  //       this.setState( { purchasing: true } );
-  //   }
-  //   // else {
-  //   //     this.props.onSetAuthRedirectPath('/checkout');
-  //   //     this.props.history.push('/auth');
-  //   // }
-  // }
+  componentDidUpdate(prevProps: IProps, prevState: IState) {
+    if (
+      this.state.category !== prevState.category ||
+      this.state.sortOrder !== prevState.sortOrder
+    ) {
+      this.fetchPhotos();
+    }
+  }
 
-  postSelectedHandler = (photoId: string) => {
-    this.props.history.push('/photos/' + photoId);
+  async fetchPhotos() {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/photos?category=${this.state.category}&searchKeyword=${this.state.searchKeyword}&sortOrder=${this.state.sortOrder}`
+      );
+      const photos = response.data;
+      this.setState({ photos: photos });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    this.fetchPhotos();
+
+    // this.setState({ searchKeyword: e.target })
   };
+
+  sortHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    this.setState({ sortOrder: e.target.value });
+  };
+
+  categoryHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    this.setState({ category: e.target.value });
+  };
+
+  // postSelectedHandler = (photoId: string) => {
+  //   this.props.history.push('/photos/' + photoId);
+  // };
 
   render() {
     // TODO Add error message while server is not responding
@@ -80,7 +103,6 @@ class Photos extends Component<IProps, IState> {
             author={photo.author}
             url={photo.url}
             price={photo.price}
-            // purchaseConfirmed={this.purchaseConfirmedHandler}
             // clicked={() => this.postSelectedHandler( photo._id )}
           ></Photo>
         </Link>
@@ -89,26 +111,42 @@ class Photos extends Component<IProps, IState> {
 
     return (
       <div>
+        <ul className="filter">
+          <li>
+            <form onSubmit={this.submitHandler}>
+              <input
+                name="searchKeyword"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  this.setState({ searchKeyword: e.target.value })
+                }
+              />
+              <button type="submit">Search</button>
+            </form>
+          </li>
+          <li>
+            Sort By{' '}
+            <select name="sortOrder" onChange={this.sortHandler}>
+              <option value="">Newest</option>
+              <option value="lowest">Price - Low to High</option>
+              <option value="highest">Price - High to Low</option>
+            </select>
+          </li>
+          <li>
+            Category{' '}
+            <select name="sortOrder" onChange={this.categoryHandler}>
+              <option value="">None</option>
+              <option value="Fashion">Fashion</option>
+              <option value="Aerial">Aerial</option>
+              <option value="Travel">Travel</option>
+              <option value="Animals">Animals</option>
+            </select>
+          </li>
+        </ul>
         <section className="Photos">{photos}</section>
       </div>
     );
   }
 }
 
-const mapStateToProps = (state: any) => {
-  return {
-    // ings: state.burgerBuilder.ingredients,
-    // price: state.burgerBuilder.totalPrice,
-    // error: state.burgerBuilder.error,
-    isAuthenticated: state.auth.token !== null
-  };
-};
-
-// const mapDispatchToProps = dispatch => {
-//   return {
-//       onOrderBurger: (orderData, token) => dispatch(actions.purchaseBurger(orderData, token))
-//   };
-// };
-
 // export default Photos;
-export default connect(mapStateToProps, null)(withErrorHandler(Photos, axios));
+export default withErrorHandler(Photos, axios);
