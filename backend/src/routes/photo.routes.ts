@@ -8,8 +8,8 @@ const router = Router();
 
 router.get('/photos', PhotoController.findAll);
 router.get('/photos/:id', PhotoController.findOne);
-// router.post('/photos', jwtAuth, upload, PhotoController.createOne);
-router.post('/photos', upload, PhotoController.createOne);
+router.post('/photos', jwtAuth, upload, PhotoController.createOne);
+// router.post('/photos', upload, PhotoController.createOne);
 router.patch('/photos/:id', jwtAuth, PhotoController.updateOne);
 router.delete('/photos/:id', jwtAuth, PhotoController.deleteOne);
 

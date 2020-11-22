@@ -18,7 +18,8 @@ const App: React.FC = () => {
           <Route path="/logout" component={Logout} />
           <Route path="/new-photo" component={NewPhoto} />
           <Route path="/photos/:id" component={FullPhoto} />
-          <Route path="/" component={Photos} />
+          <Route path="/category/:id" component={Photos} />
+          <Route path="/" exact={true} component={Photos} />
         </Switch>
       </Layout>
     </div>
