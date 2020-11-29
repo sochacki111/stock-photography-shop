@@ -1,7 +1,9 @@
 import { Schema, Document, HookNextFunction, model } from 'mongoose';
 import bcrypt from 'bcrypt';
 
+// TODO Extract interfaces to /interfaces
 export interface IUser extends Document {
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;

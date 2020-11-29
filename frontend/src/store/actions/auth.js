@@ -7,11 +7,14 @@ export const authStart = () => {
   };
 }
 
-export const authSuccess = (token, userId) => {
+export const authSuccess = (token, userId, userEmail) => {
+  console.log('authSuccess');
+  console.log(userEmail);
   return {
     type: actionTypes.AUTH_SUCCESS,
     idToken: token,
-    userId: userId
+    userId: userId,
+    userEmail: userEmail
   };
 }
 
@@ -51,7 +54,7 @@ export const auth = (email, password, isSignup) => {
       .then(res => {
         console.log(res);
         // Capture data sent from the server
-        dispatch(authSuccess(res.data.idToken, res.data.localId));
+        dispatch(authSuccess(res.data.idToken, res.data.localId, res.data.userEmail));
         dispatch(checkAuthTimeout(res.data.expiresIn));
       })
       .catch(err => {

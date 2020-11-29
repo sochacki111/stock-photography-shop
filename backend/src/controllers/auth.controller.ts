@@ -61,6 +61,7 @@ export const signIn = async (
     return res.status(200).json({
       idToken: createToken(user),
       localId: user._id,
+      userEmail: user.email,
       expiresIn: TOKEN_TIMEOUT
     });
   }

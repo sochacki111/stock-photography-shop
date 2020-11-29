@@ -45,7 +45,7 @@ class Auth extends Component {
           type: 'email',
           placeholder: 'Mail Address'
         },
-        value: '',
+        value: 'example@email.com',
         validation: {
           required: true,
           isEmail: true
@@ -59,7 +59,7 @@ class Auth extends Component {
           type: 'password',
           placeholder: 'Password'
         },
-        value: '',
+        value: 'password',
         validation: {
           required: true,
           minLength: 6
@@ -68,7 +68,7 @@ class Auth extends Component {
         touched: false
       }
     },
-    isSignup: true
+    isSignup: false
   };
 
   checkValidity(value, rules) {

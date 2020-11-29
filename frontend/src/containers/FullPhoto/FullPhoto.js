@@ -2,17 +2,20 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { loadStripe } from "@stripe/stripe-js";
+import { Link } from 'react-router-dom';
 
 import './FullPhoto.module.css';
 import * as actions from '../../store/actions/index';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 class FullPhoto extends Component {
+  // TODO Make use of state instead of redux props
   state = {
     loadedPhoto: null
   };
 
   componentDidMount() {
     this.props.onFetchPhoto(this.props.match.params.id);
+    console.log(this.props.loadedPhoto);
   }
 
   stripePromise = loadStripe("pk_test_51HgY4dIKCcakOEe8LkhGBHu7mfqVlO7NSt4DcxT6tdUoImXr8IXKircdK7x9gUr7x3rIjpalkTccuD3AoBabqgHu00ZwRYWmp3");
@@ -60,6 +63,8 @@ class FullPhoto extends Component {
             onClick={this.handleClick}
           // disabled={!state.stripe || state.loading}
           >Checkout</button>
+          <Link className="btn" to={`/photos/edit/${this.props.loadedPhoto._id}`}> Edit</Link>
+
         </div>
       );
     }
