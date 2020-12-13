@@ -76,7 +76,7 @@ class NewPhoto extends Component<IProps, IState> {
               <label>File</label>
               <input type="file" onChange={this.fileSelectedHandler} />
             </li>
-            <li>
+            {/* <li>
               <label>Author</label>
               <input
                 type="text"
@@ -85,7 +85,7 @@ class NewPhoto extends Component<IProps, IState> {
                   this.setState({ author: event.target.value })
                 }
               />
-            </li>
+            </li> */}
             <li>
               <label>Title</label>
               <input

@@ -4,8 +4,10 @@ import './Photo.css';
 
 interface Props {
   title: string;
-  author: string;
-  keywords?: string[];
+  author: {
+    id: string;
+    email: string;
+  };
   url: string;
   price: number;
   // purchaseConfirmed: ((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void) | undefined;
@@ -23,7 +25,7 @@ export const Photo: React.FC<Props> = (props) => {
         height="100"
       />
       <h4>Author: </h4>
-      {props.author}
+      {props.author.email}
       <h4>Title: </h4>
       {props.title}
       <h4>Price: </h4>${props.price}

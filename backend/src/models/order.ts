@@ -3,7 +3,6 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IOrder extends Document {
   title: string;
   author: string;
-  keywords: string[];
   url: string;
   price: number;
 }

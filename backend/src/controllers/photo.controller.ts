@@ -3,12 +3,18 @@ import { PutObjectRequest } from 'aws-sdk/clients/s3';
 import Photo from '../models/photo';
 import logger from '../util/logger';
 import s3 from '../config/s3.config';
+import IPhoto from '../models/photo';
+import User from '../models/user';
 
 export const findAll = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<Response> => {
+  const user = (<any>req).user;
+  console.log('user');
+  console.log(user); // TODO Check if works without requiring jwtAuth
+
   const category = req.query.category
     ? { category: String(req.query.category) }
     : {};
@@ -20,19 +26,34 @@ export const findAll = async (
         }
       }
     : {};
-  const sortOrder = req.query.sortOrder
-    ? req.query.sortOrder === 'lowest'
-      ? { price: 1 }
-      : { price: -1 }
-    : { _id: -1 };
+
+  let sortOrder;
+  if (req.query.sortOrder) {
+    sortOrder = req.query.sortOrder === 'lowest' ? { price: 1 } : { price: -1 };
+  } else {
+    sortOrder = { _id: -1 };
+  }
+
+  const userEmail: string = req.query.author ? String(req.query.author) : '';
+  User.findOne({
+    email: userEmail
+  });
+  // const userEmail = req.query.author
+  //   ? { author: { email: req.query.author } }
+  //   : { author: { email: '' } };
+  // let userEmail = { author: { email: ''} };
+  // if (req.query.author) {
+  //   userEmail = req.query.author;
+  // }
+  // {author: { id: { type: ObjectId; ref: "User"; }; email: string; }}
   try {
     const foundPhotos = await Photo.find({
       ...category,
       ...searchKeyword
     }).sort(sortOrder);
-    logger.debug(
-      `Found photos: ${foundPhotos} category: ${req.query.category} searchKeyword: ${req.query.searchKeyword} sortOrder: ${req.query.sortOrder}`
-    );
+    // logger.debug(
+    //   `Found photos: ${foundPhotos} category: ${req.query.category} searchKeyword: ${req.query.searchKeyword} sortOrder: ${req.query.sortOrder}`
+    // );
 
     return res.status(200).send(foundPhotos);
   } catch (err) {
@@ -60,6 +81,7 @@ export const createOne = async (
   res: Response,
   next: NextFunction
 ): Promise<Response> => {
+  const user = (<any>req).user;
   try {
     // This comes from multer
     const originalFileName = req.file.originalname;
@@ -74,13 +96,19 @@ export const createOne = async (
 
     const uploadedData = await s3.upload(params).promise();
 
+    const author = {
+      id: user._id,
+      email: user.email
+    };
+
     const photoToCreate = {
       title: req.body.title,
-      author: req.body.author,
-      keywords: req.body.keywords,
+      // author: req.body.author,
+      author: author,
       category: req.body.category,
       url: uploadedData.Location,
       price: req.body.price
+      // owner: req.user._id
     };
 
     const createdPhoto = await Photo.create(photoToCreate);
