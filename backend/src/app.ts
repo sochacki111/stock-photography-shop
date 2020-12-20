@@ -4,13 +4,16 @@ import bodyParser from 'body-parser';
 import passport from 'passport';
 import cors from 'cors';
 import Stripe from 'stripe';
-import { v4 as uuidv4 } from 'uuid';
+import morgan from 'morgan';
 
-import passportMiddleware from './config/passport';
+// import { v4 as uuidv4 } from 'uuid';
+
+import { JwtStrategy, AnonymousStrategy } from './config/passport';
 import logger from './util/logger';
 import { MONGODB_URI, STRIPE_SECRET_ACCESS_KEY } from './util/secrets';
 import authRoutes from './routes/auth.routes';
 import photoRoutes from './routes/photo.routes';
+import userRoutes from './routes/user.routes';
 
 // Create a new express app instance
 const app: express.Application = express();
@@ -37,9 +40,11 @@ mongoose
 // Middlewares
 app.use(cors());
 app.use(passport.initialize());
+app.use(morgan('dev'));
 
 // Passport configuration
-passport.use(passportMiddleware);
+passport.use(JwtStrategy);
+passport.use(AnonymousStrategy);
 
 // Express configuration
 app.set('port', process.env.PORT || 8080);
@@ -54,6 +59,7 @@ const stripe = new Stripe(STRIPE_SECRET_ACCESS_KEY, {
 // Routes
 app.use(authRoutes);
 app.use(photoRoutes);
+app.use(userRoutes);
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello World!');
 });

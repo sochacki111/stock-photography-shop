@@ -104,21 +104,24 @@ class Photos extends Component<IProps, IState> {
     //     );
     //   });
     // }
-    const photos: JSX.Element[] = this.state.photos.map((photo: Photo) => {
-      return (
-        <Link to={'/photos/' + photo._id} key={photo._id}>
-          <Photo
-            title={photo.title}
-            // author=""
-            // author={photo.author}
-            author={photo.author}
-            url={photo.url}
-            price={photo.price}
-            // clicked={() => this.postSelectedHandler( photo._id )}
-          ></Photo>
-        </Link>
-      );
-    });
+    let photos: JSX.Element[] = [];
+    if (Array.isArray(this.state.photos)) {
+      photos = this.state.photos.map((photo: Photo) => {
+        return (
+          <Link to={'/photos/' + photo._id} key={photo._id}>
+            <Photo
+              title={photo.title}
+              // author=""
+              // author={photo.author}
+              // author={photo.author}
+              url={photo.url}
+              price={photo.price}
+              // clicked={() => this.postSelectedHandler( photo._id )}
+            ></Photo>
+          </Link>
+        );
+      });
+    }
 
     return (
       <div>

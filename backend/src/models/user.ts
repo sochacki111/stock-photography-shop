@@ -8,6 +8,12 @@ export interface IUser extends Document {
   lastName: string;
   email: string;
   password: string;
+  photos: [
+    {
+      type: Schema.Types.ObjectId;
+      ref: 'Photo';
+    }
+  ];
   comparePassword: (password: string) => Promise<boolean>;
 }
 
@@ -25,7 +31,13 @@ const UserSchema: Schema = new Schema(
     password: {
       type: String,
       required: true
-    }
+    },
+    photos: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Photo'
+      }
+    ]
   },
   {
     timestamps: true // created_at / updated_at

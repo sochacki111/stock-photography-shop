@@ -55,7 +55,7 @@ class FullPhoto extends Component {
             height="430"
           />
           <h4>Author: </h4>
-          {this.props.loadedPhoto.author.email}
+          {this.props.loadedPhoto.owner.email}
           <h4>Title: </h4>
           {this.props.loadedPhoto.title}
           <h4>Price: </h4>${this.props.loadedPhoto.price}
