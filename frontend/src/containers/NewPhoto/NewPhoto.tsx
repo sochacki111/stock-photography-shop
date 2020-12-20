@@ -69,7 +69,7 @@ class NewPhoto extends Component<IProps, IState> {
   render() {
     return (
       <div>
-        <h1>Add a Photo</h1>
+        <h1>Upload photo</h1>
         <form>
           <ul>
             <li>
