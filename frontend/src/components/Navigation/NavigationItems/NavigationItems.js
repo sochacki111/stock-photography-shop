@@ -2,6 +2,7 @@ import React from 'react';
 
 import classes from './NavigationItems.module.css';
 import NavigationItem from './NavigationItem/NavigationItem';
+import Auxiliary from '../../../hoc/Auxiliary/Auxiliary';
 
 const navigationItems = (props) => (
   <ul className={classes.NavigationItems}>
@@ -9,17 +10,18 @@ const navigationItems = (props) => (
       Stock Photography
     </NavigationItem>
     {props.isAuthenticated ? (
-      <NavigationItem link="/new-photo">New Photo</NavigationItem>
-    ) : null}
-    {!props.isAuthenticated ? (
-      <NavigationItem link="/auth">Log in</NavigationItem>
+      <Auxiliary>
+        <NavigationItem link="/new-photo">Upload photo</NavigationItem>
+        <NavigationItem link="/my-photos">My photos</NavigationItem>
+        <li>Logged as: {props.currentUser}</li>
+        {/* <NavigationItem link="/new-photo">
+          Logged as: {props.currentUser}
+        </NavigationItem> */}
+        <NavigationItem link="/logout">Logout</NavigationItem>
+      </Auxiliary>
     ) : (
-      <NavigationItem link="/logout">Logout</NavigationItem>
+      <NavigationItem link="/auth">Log in</NavigationItem>
     )}
-    <NavigationItem link="/new-photo">
-      Logged as: {props.currentUser}
-    </NavigationItem>
-    <NavigationItem link="/my-photos">My photos</NavigationItem>
   </ul>
 );
 
