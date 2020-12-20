@@ -3,6 +3,8 @@ import { PutObjectRequest } from 'aws-sdk/clients/s3';
 import Photo from '../models/photo';
 import logger from '../util/logger';
 import s3 from '../config/s3.config';
+import IPhoto from '../models/photo';
+import User from '../models/user';
 
 export const findAll = async (
   req: Request,
@@ -20,19 +22,19 @@ export const findAll = async (
         }
       }
     : {};
-  const sortOrder = req.query.sortOrder
-    ? req.query.sortOrder === 'lowest'
-      ? { price: 1 }
-      : { price: -1 }
-    : { _id: -1 };
+
+  let sortOrder;
+  if (req.query.sortOrder) {
+    sortOrder = req.query.sortOrder === 'lowest' ? { price: 1 } : { price: -1 };
+  } else {
+    sortOrder = { _id: -1 };
+  }
+
   try {
     const foundPhotos = await Photo.find({
       ...category,
       ...searchKeyword
-    }).sort(sortOrder);
-    logger.debug(
-      `Found photos: ${foundPhotos} category: ${req.query.category} searchKeyword: ${req.query.searchKeyword} sortOrder: ${req.query.sortOrder}`
-    );
+    });
 
     return res.status(200).send(foundPhotos);
   } catch (err) {
@@ -46,9 +48,10 @@ export const findOne = async (
   next: NextFunction
 ): Promise<Response> => {
   try {
-    const foundPhoto = await Photo.findById(req.params.id);
-    logger.debug(`Found photos: ${foundPhoto}`);
-
+    const foundPhoto = await Photo.findById(req.params.id)
+      .populate('owner', 'email')
+      .exec();
+    logger.debug(`Found photo: ${foundPhoto}`);
     return res.status(200).send(foundPhoto);
   } catch (err) {
     return res.send(err);
@@ -60,8 +63,9 @@ export const createOne = async (
   res: Response,
   next: NextFunction
 ): Promise<Response> => {
+  const user = (<any>req).user;
   try {
-    // This comes from multer
+    // This comes from multer middleware
     const originalFileName = req.file.originalname;
 
     const params: PutObjectRequest = {
@@ -76,8 +80,7 @@ export const createOne = async (
 
     const photoToCreate = {
       title: req.body.title,
-      author: req.body.author,
-      keywords: req.body.keywords,
+      owner: user?._id,
       category: req.body.category,
       url: uploadedData.Location,
       price: req.body.price
@@ -85,7 +88,11 @@ export const createOne = async (
 
     const createdPhoto = await Photo.create(photoToCreate);
     logger.debug(`Created photo: ${createdPhoto}`);
-
+    await User.findByIdAndUpdate(user._id, {
+      $push: { photos: createdPhoto._id }
+    })
+      .lean()
+      .exec();
     return res.status(201).send(createdPhoto);
   } catch (err) {
     return res.send(err);

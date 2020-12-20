@@ -8,6 +8,7 @@ import Logout from './containers/Auth/Logout/Logout';
 import Layout from './hoc/Layout/Layout';
 import Photos from './containers/Photos/Photos';
 import FullPhoto from './containers/FullPhoto/FullPhoto';
+import MyPhotos from './containers/MyPhotos/MyPhotos';
 import EditPhoto from './containers/EditPhoto/EditPhoto';
 
 const App: React.FC = () => {
@@ -16,6 +17,7 @@ const App: React.FC = () => {
       <Layout>
         <Switch>
           <Route exact path="/" component={Photos} />
+          <Route exact path="/my-photos" component={MyPhotos} />
           <Route exact path="/auth" component={Auth} />
           <Route exact path="/logout" component={Logout} />
           <Route exact path="/new-photo" component={NewPhoto} />

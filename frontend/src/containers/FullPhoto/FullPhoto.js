@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import { loadStripe } from "@stripe/stripe-js";
+import { loadStripe } from '@stripe/stripe-js';
 import { Link } from 'react-router-dom';
 
 import './FullPhoto.module.css';
@@ -18,20 +18,22 @@ class FullPhoto extends Component {
     console.log(this.props.loadedPhoto);
   }
 
-  stripePromise = loadStripe("pk_test_51HgY4dIKCcakOEe8LkhGBHu7mfqVlO7NSt4DcxT6tdUoImXr8IXKircdK7x9gUr7x3rIjpalkTccuD3AoBabqgHu00ZwRYWmp3");
+  stripePromise = loadStripe(
+    'pk_test_51HgY4dIKCcakOEe8LkhGBHu7mfqVlO7NSt4DcxT6tdUoImXr8IXKircdK7x9gUr7x3rIjpalkTccuD3AoBabqgHu00ZwRYWmp3'
+  );
   handleClick = async (event) => {
     const stripe = await this.stripePromise;
-    const response = await fetch("http://localhost:8080/create-session", {
-      method: "POST",
+    const response = await fetch('http://localhost:8080/create-session', {
+      method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ photo: this.props.loadedPhoto })
     });
     const session = await response.json();
     // When the customer clicks on the button, redirect them to Checkout.
     const result = await stripe.redirectToCheckout({
-      sessionId: session.id,
+      sessionId: session.id
     });
     if (result.error) {
       // If `redirectToCheckout` fails due to a browser or network
@@ -53,7 +55,7 @@ class FullPhoto extends Component {
             height="430"
           />
           <h4>Author: </h4>
-          {this.props.loadedPhoto.author}
+          {this.props.loadedPhoto.owner.email}
           <h4>Title: </h4>
           {this.props.loadedPhoto.title}
           <h4>Price: </h4>${this.props.loadedPhoto.price}
@@ -61,33 +63,39 @@ class FullPhoto extends Component {
           <button
             role="link"
             onClick={this.handleClick}
-          // disabled={!state.stripe || state.loading}
-          >Checkout</button>
-          <Link className="btn" to={`/photos/edit/${this.props.loadedPhoto._id}`}> Edit</Link>
-
+            // disabled={!state.stripe || state.loading}
+          >
+            Checkout
+          </button>
+          <Link
+            className="btn"
+            to={`/photos/edit/${this.props.loadedPhoto._id}`}
+          >
+            {' '}
+            Edit
+          </Link>
         </div>
       );
     }
 
-    return (
-      <div>
-        {photo}
-      </div>
-    );
+    return <div>{photo}</div>;
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     // loading: state.order.loading,
     loadedPhoto: state.photo.photo
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     onFetchPhoto: (photoId) => dispatch(actions.fetchPhoto(photoId))
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(FullPhoto, axios));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withErrorHandler(FullPhoto, axios));

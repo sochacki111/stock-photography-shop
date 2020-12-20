@@ -9,6 +9,7 @@ import './Photos.css';
 
 interface IProps extends RouteComponentProps {
   isAuthenticated: boolean;
+  token: string;
   // TODO refactor
   match: any;
 }
@@ -16,8 +17,11 @@ interface IProps extends RouteComponentProps {
 interface Photo {
   _id: string;
   title: string;
-  author: string;
-  keywords: string[];
+  author: {
+    id: string;
+    email: string;
+  };
+  // author: string;
   url: string;
   price: number;
 }
@@ -56,8 +60,13 @@ class Photos extends Component<IProps, IState> {
 
   async fetchPhotos() {
     try {
+      const config = {
+        // headers: { Authorization: `${this.props.token}` }
+        headers: { Authorization: `Bearer ${this.props.token}` }
+      };
       const response = await axios.get(
-        `http://localhost:8080/photos?category=${this.state.category}&searchKeyword=${this.state.searchKeyword}&sortOrder=${this.state.sortOrder}`
+        `http://localhost:8080/photos?category=${this.state.category}&searchKeyword=${this.state.searchKeyword}&sortOrder=${this.state.sortOrder}`,
+        config
       );
       const photos = response.data;
       this.setState({ photos: photos });
@@ -95,19 +104,24 @@ class Photos extends Component<IProps, IState> {
     //     );
     //   });
     // }
-    const photos: JSX.Element[] = this.state.photos.map((photo: Photo) => {
-      return (
-        <Link to={'/photos/' + photo._id} key={photo._id}>
-          <Photo
-            title={photo.title}
-            author={photo.author}
-            url={photo.url}
-            price={photo.price}
-            // clicked={() => this.postSelectedHandler( photo._id )}
-          ></Photo>
-        </Link>
-      );
-    });
+    let photos: JSX.Element[] = [];
+    if (Array.isArray(this.state.photos)) {
+      photos = this.state.photos.map((photo: Photo) => {
+        return (
+          <Link to={'/photos/' + photo._id} key={photo._id}>
+            <Photo
+              title={photo.title}
+              // author=""
+              // author={photo.author}
+              // author={photo.author}
+              url={photo.url}
+              price={photo.price}
+              // clicked={() => this.postSelectedHandler( photo._id )}
+            ></Photo>
+          </Link>
+        );
+      });
+    }
 
     return (
       <div>
@@ -148,5 +162,12 @@ class Photos extends Component<IProps, IState> {
   }
 }
 
+const mapStateToProps = (state: any) => {
+  return {
+    token: state.auth.token
+  };
+};
+
 // export default Photos;
-export default withErrorHandler(Photos, axios);
+
+export default connect(mapStateToProps, null)(withErrorHandler(Photos, axios));
