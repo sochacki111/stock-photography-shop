@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { RouteComponentProps, Link } from 'react-router-dom';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
 
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import { Photo } from '../../components/Photo/Photo';
 import './Photos.css';
-
 interface IProps extends RouteComponentProps {
-  isAuthenticated: boolean;
+  isAuthenticated: boolean; // TODO Delete?
   token: string;
   // TODO refactor
   match: any;
@@ -21,7 +22,6 @@ interface Photo {
     id: string;
     email: string;
   };
-  // author: string;
   url: string;
   price: number;
 }
@@ -29,7 +29,6 @@ interface Photo {
 interface IState {
   photos: Photo[];
   error: string | boolean;
-  purchasing: boolean;
   category: string;
   searchKeyword: string;
   sortOrder: string;
@@ -41,8 +40,7 @@ class Photos extends Component<IProps, IState> {
     error: false,
     category: this.props.match.params.id ? this.props.match.params.id : '',
     searchKeyword: '',
-    sortOrder: '',
-    purchasing: false // TODO delete
+    sortOrder: ''
   };
 
   componentDidMount() {
@@ -61,7 +59,6 @@ class Photos extends Component<IProps, IState> {
   async fetchPhotos() {
     try {
       const config = {
-        // headers: { Authorization: `${this.props.token}` }
         headers: { Authorization: `Bearer ${this.props.token}` }
       };
       const response = await axios.get(
@@ -90,10 +87,6 @@ class Photos extends Component<IProps, IState> {
     this.setState({ category: e.target.value });
   };
 
-  // postSelectedHandler = (photoId: string) => {
-  //   this.props.history.push('/photos/' + photoId);
-  // };
-
   render() {
     // TODO Add error message while server is not responding
     // let photos = <p style={{ textAlign: 'center' }}>Something went wrong!</p>;
@@ -104,23 +97,24 @@ class Photos extends Component<IProps, IState> {
     //     );
     //   });
     // }
-    let photos: JSX.Element[] = [];
+    let photos: JSX.Element | null = null;
     if (Array.isArray(this.state.photos)) {
-      photos = this.state.photos.map((photo: Photo) => {
-        return (
-          <Link to={'/photos/' + photo._id} key={photo._id}>
-            <Photo
-              title={photo.title}
-              // author=""
-              // author={photo.author}
-              // author={photo.author}
-              url={photo.url}
-              price={photo.price}
-              // clicked={() => this.postSelectedHandler( photo._id )}
-            ></Photo>
-          </Link>
-        );
-      });
+      photos = (
+        <GridList cellHeight={160} cols={4}>
+          {this.state.photos.map((photo) => (
+            <GridListTile cols={2} rows={1} key={photo._id}>
+              <Link to={'/photos/' + photo._id}>
+                <img
+                  src={photo.url}
+                  alt={photo.title}
+                  // className="MuiGridListTile-imgFullHeight"
+                  className="MuiGridListTile-imgFullWidth"
+                />
+              </Link>
+            </GridListTile>
+          ))}
+        </GridList>
+      );
     }
 
     return (
@@ -167,7 +161,5 @@ const mapStateToProps = (state: any) => {
     token: state.auth.token
   };
 };
-
-// export default Photos;
 
 export default connect(mapStateToProps, null)(withErrorHandler(Photos, axios));

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Route, BrowserRouter, Switch, Link } from 'react-router-dom';
 import { Tabs, Tab, AppBar } from '@material-ui/core';
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+
 import { createStore } from 'redux';
 import { connect, useDispatch, useSelector } from 'react-redux';
 
@@ -18,73 +20,65 @@ import Auxiliary from './hoc/Auxiliary/Auxiliary';
 // TODO Use redux to render tabs conditionally
 // redux state
 const App = () => {
-  const routes = [
-    '/',
-    '/auth',
-    '/new-photo',
-    '/my-photos',
-    '/logout'
-    // '/category/:id',
-    // '/photos/edit/:id',
-    // '/photos/:id'
-  ];
+  const routes = ['/', '/auth', '/new-photo', '/my-photos', '/logout'];
   const isAuthenticated = useSelector((state) => state.auth.token !== null);
   console.log(isAuthenticated);
 
   return (
     <div className="App">
-      {/* <Layout></Layout> */}
       <Route
         path="/"
         render={(history) => (
-          <AppBar>
-            <Tabs
-              // value={
-              //   history.location.pathname !== '/'
-              //     ? history.location.pathname
-              //     : false
-              // }
-              value={routes[0]}
-            >
-              {console.log(history.location.pathname)}
-              <Tab
+          <>
+            <AppBar>
+              <Tabs
+                // value={
+                //   history.location.pathname !== '/'
+                //     ? history.location.pathname
+                //     : false
+                // }
                 value={routes[0]}
-                label="Stock photography"
-                component={Link}
-                to={routes[0]}
-              />
-
-              {isAuthenticated ? (
-                <Auxiliary>
-                  <Tab
-                    value={routes[2]}
-                    label="New Photo"
-                    component={Link}
-                    to={routes[2]}
-                  />
-                  <Tab
-                    value={routes[3]}
-                    label="My Photos"
-                    component={Link}
-                    to={routes[3]}
-                  />
-                  <Tab
-                    value={routes[4]}
-                    label="Log out"
-                    component={Link}
-                    to={routes[4]}
-                  />
-                </Auxiliary>
-              ) : (
+              >
+                {console.log(history.location.pathname)}
                 <Tab
-                  value={routes[1]}
-                  label="Log in"
+                  value={routes[0]}
+                  label="Stock photography"
                   component={Link}
-                  to={routes[1]}
+                  to={routes[0]}
                 />
-              )}
-            </Tabs>
-          </AppBar>
+
+                {isAuthenticated ? (
+                  <Auxiliary>
+                    <Tab
+                      value={routes[2]}
+                      label="New Photo"
+                      component={Link}
+                      to={routes[2]}
+                    />
+                    <Tab
+                      value={routes[3]}
+                      label="My Photos"
+                      component={Link}
+                      to={routes[3]}
+                    />
+                    <Tab
+                      value={routes[4]}
+                      label="Log out"
+                      component={Link}
+                      to={routes[4]}
+                    />
+                  </Auxiliary>
+                ) : (
+                  <Tab
+                    value={routes[1]}
+                    label="Log in"
+                    component={Link}
+                    to={routes[1]}
+                  />
+                )}
+              </Tabs>
+            </AppBar>
+          </>
         )}
       />
 

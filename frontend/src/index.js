@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 import './index.css';
 import App from './App';
@@ -27,6 +28,7 @@ ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
+        <CssBaseline />
         <App />
       </BrowserRouter>
     </Provider>
