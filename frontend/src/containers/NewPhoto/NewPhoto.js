@@ -1,19 +1,14 @@
-import React, { Component, useState } from 'react';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import TextField from '@material-ui/core/TextField';
-import { withStyles } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import FormGroup from '@material-ui/core/FormGroup';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
+import { DropzoneArea } from 'material-ui-dropzone';
 
 import axios from 'axios';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
@@ -47,14 +42,18 @@ const useStyles = makeStyles((theme) => ({
   },
   select: {
     textAlign: 'left'
+  },
+  dropZone: {
+    height: '20%',
+    width: '25%'
   }
 }));
 
 const NewPhoto = (props) => {
-  const [selectedFile, setSelectedFile] = useState(false);
-  const [title, setTitle] = useState();
-  const [category, setCategory] = useState(false);
-  const [price, setPrice] = useState();
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
+  const [price, setPrice] = useState(0);
 
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
@@ -62,10 +61,8 @@ const NewPhoto = (props) => {
   const onAddPhoto = (photoData, token) =>
     dispatch(actions.addPhoto(photoData, token));
 
-  const fileSelectedHandler = async (event) => {
-    if (event.target.files !== null) {
-      await setSelectedFile(event.target.files[0]);
-    }
+  const fileSelectedHandler = (file) => {
+    setSelectedFile(file[0]);
   };
 
   const fileUploadHandler = async (e) => {
@@ -76,8 +73,7 @@ const NewPhoto = (props) => {
       fd.append('title', title);
       fd.append('category', category);
       fd.append('price', String(price));
-
-      await onAddPhoto(fd, props.token);
+      await onAddPhoto(fd, token);
     }
   };
 
@@ -87,21 +83,12 @@ const NewPhoto = (props) => {
     <div className={classes.form}>
       <h1>Upload photo</h1>
       <FormGroup>
-        {/* <FormControl>
-          <label htmlFor="file">
-            <Button variant="raised" component="span">
-              Upload
-            </Button>
-          </label>
-          <Input
-            id="file"
-            type="file"
-            onChange={fileSelectedHandler}
-            display="none"
-            accept="image/*"
-            style={{ display: 'none' }}
-          />
-        </FormControl> */}
+        <DropzoneArea
+          className={classes.dropZone}
+          acceptedFiles={['image/jpeg', 'image/png', 'image/bmp']}
+          filesLimit={1}
+          onChange={fileSelectedHandler.bind(this)}
+        />
         <FormControl>
           <InputLabel htmlFor="title">Title</InputLabel>
           <Input
@@ -122,10 +109,12 @@ const NewPhoto = (props) => {
           />
         </FormControl>
         <FormControl>
-          <InputLabel id="category">Category</InputLabel>
+          <InputLabel id="category" shrink>
+            Category
+          </InputLabel>
           <Select
             id="category"
-            name="sortOrder"
+            value={category}
             displayEmpty
             onChange={(event) => setCategory(event.target.value)}
             className={classes.select}

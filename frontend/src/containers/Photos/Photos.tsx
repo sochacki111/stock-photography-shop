@@ -118,7 +118,7 @@ class Photos extends Component<IProps, IState> {
     }
 
     return (
-      <div>
+      <div style={{ marginTop: '15vh' }}>
         <ul className="filter">
           <li>
             <form onSubmit={this.submitHandler}>
