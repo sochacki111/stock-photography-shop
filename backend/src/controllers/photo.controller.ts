@@ -23,18 +23,42 @@ export const findAll = async (
       }
     : {};
 
-  let sortOrder;
-  if (req.query.sortOrder) {
-    sortOrder = req.query.sortOrder === 'lowest' ? { price: 1 } : { price: -1 };
-  } else {
-    sortOrder = { _id: -1 };
-  }
+  // let sortOrder;
+  // if (req.query.sortOrder) {
+  //   sortOrder = req.query.sortOrder === 'lowest' ? { price: 1 } : { price: -1 };
+  // } else {
+  //   sortOrder = { _id: -1 };
+  // }
+
+  const order = {
+    lowest: { price: 1 },
+    highest: { price: -1 },
+    newest: { _id: -1 },
+    oldest: { _id: 1 }
+  };
+
+  // TODO Convert to object literal
+  const getSortOrder = (sortOrder: string) => {
+    switch (sortOrder) {
+      case 'lowest':
+        return { price: 1 };
+      case 'highest':
+        return { price: -1 };
+      case 'newest':
+        return { _id: -1 };
+      case 'oldest':
+        return { _id: 1 };
+      default:
+        return { _id: -1 };
+    }
+  };
+  const sortOrder = getSortOrder(String(req.query.sortOrder));
 
   try {
     const foundPhotos = await Photo.find({
       ...category,
       ...searchKeyword
-    });
+    }).sort(sortOrder);
 
     return res.status(200).send(foundPhotos);
   } catch (err) {

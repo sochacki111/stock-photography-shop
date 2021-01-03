@@ -4,6 +4,13 @@ import axios from 'axios';
 import { RouteComponentProps, Link } from 'react-router-dom';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import Input from '@material-ui/core/Input';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Button from '@material-ui/core/Button';
+import FormGroup from '@material-ui/core/FormGroup';
 
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import { Photo } from '../../components/Photo/Photo';
@@ -79,11 +86,13 @@ class Photos extends Component<IProps, IState> {
     // this.setState({ searchKeyword: e.target })
   };
 
-  sortHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  // sortHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  sortHandler = (e: any) => {
     this.setState({ sortOrder: e.target.value });
   };
 
-  categoryHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  // categoryHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  categoryHandler = (e: any) => {
     this.setState({ category: e.target.value });
   };
 
@@ -119,37 +128,65 @@ class Photos extends Component<IProps, IState> {
 
     return (
       <div style={{ marginTop: '15vh' }}>
-        <ul className="filter">
-          <li>
-            <form onSubmit={this.submitHandler}>
-              <input
-                name="searchKeyword"
+        <FormGroup
+          style={{ width: '20%', margin: 'auto', marginBottom: '5vh' }}
+        >
+          <FormControl>
+            <form onSubmit={this.submitHandler} style={{ width: '100%' }}>
+              <InputLabel htmlFor="searchKeyword">Search keyword</InputLabel>
+              <Input
+                style={{ width: '75%', float: 'left' }}
+                id="searchKeyword"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   this.setState({ searchKeyword: e.target.value })
                 }
               />
-              <button type="submit">Search</button>
+              <Button
+                type="submit"
+                style={{ marginTop: '1.2vh', width: '20%', float: 'right' }}
+                variant="contained"
+                color="primary"
+              >
+                Search
+              </Button>
             </form>
-          </li>
-          <li>
-            Sort By{' '}
-            <select name="sortOrder" onChange={this.sortHandler}>
-              <option value="">Newest</option>
-              <option value="lowest">Price - Low to High</option>
-              <option value="highest">Price - High to Low</option>
-            </select>
-          </li>
-          <li>
-            Category{' '}
-            <select name="sortOrder" onChange={this.categoryHandler}>
-              <option value="">None</option>
-              <option value="Fashion">Fashion</option>
-              <option value="Aerial">Aerial</option>
-              <option value="Travel">Travel</option>
-              <option value="Animals">Animals</option>
-            </select>
-          </li>
-        </ul>
+          </FormControl>
+          <FormControl>
+            <InputLabel htmlFor="sortOrder" shrink>
+              Sort By
+            </InputLabel>
+            <Select
+              id="sortOrder"
+              onChange={this.sortHandler}
+              style={{ textAlign: 'left' }}
+              displayEmpty
+              value={this.state.sortOrder}
+            >
+              <MenuItem value="">Newest</MenuItem>
+              <MenuItem value="oldest">Oldest</MenuItem>
+              <MenuItem value="lowest">Price - Low to High</MenuItem>
+              <MenuItem value="highest">Price - High to Low</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl>
+            <InputLabel htmlFor="category" shrink>
+              Category
+            </InputLabel>
+            <Select
+              name="category"
+              onChange={this.categoryHandler}
+              style={{ textAlign: 'left' }}
+              displayEmpty
+              value={this.state.category}
+            >
+              <MenuItem value="">All</MenuItem>
+              <MenuItem value="Fashion">Fashion</MenuItem>
+              <MenuItem value="Aerial">Aerial</MenuItem>
+              <MenuItem value="Travel">Travel</MenuItem>
+              <MenuItem value="Animals">Animals</MenuItem>
+            </Select>
+          </FormControl>
+        </FormGroup>
         <section className="Photos">{photos}</section>
       </div>
     );
