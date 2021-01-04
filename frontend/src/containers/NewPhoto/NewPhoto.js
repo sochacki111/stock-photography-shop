@@ -9,7 +9,8 @@ import FormGroup from '@material-ui/core/FormGroup';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { DropzoneArea } from 'material-ui-dropzone';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import * as actions from '../../store/actions/index';
@@ -58,7 +59,7 @@ const NewPhoto = (props) => {
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
 
-  const onAddPhoto = (photoData, token) =>
+  const onAddPhoto = async (photoData, token) =>
     dispatch(actions.addPhoto(photoData, token));
 
   const fileSelectedHandler = (file) => {
@@ -73,7 +74,18 @@ const NewPhoto = (props) => {
       fd.append('title', title);
       fd.append('category', category);
       fd.append('price', String(price));
+      // TODO Refine redirect AFTER successful photo create. Right now it's just redirecting
       await onAddPhoto(fd, token);
+      toast.success(`Photo: "${title}" uploaded!`, {
+        position: 'top-center',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined
+      });
+      props.history.push('/');
     }
   };
 
@@ -92,6 +104,7 @@ const NewPhoto = (props) => {
         <FormControl>
           <InputLabel htmlFor="title">Title</InputLabel>
           <Input
+            required={true}
             id="title"
             type="text"
             value={title}
