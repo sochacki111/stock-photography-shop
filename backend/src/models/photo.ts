@@ -9,6 +9,7 @@ export interface IPhoto extends Document {
   owner: {
     type: mongoose.Schema.Types.ObjectId;
     ref: 'User';
+    _id: any;
   };
 }
 

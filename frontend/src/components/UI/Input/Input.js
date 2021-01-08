@@ -71,6 +71,7 @@ const Input = (props) => {
     default:
       inputElement = (
         <input
+          required={true}
           className={inputClasses.join(' ')}
           {...props.elementConfig}
           value={props.value}

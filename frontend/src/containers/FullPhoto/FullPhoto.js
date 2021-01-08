@@ -2,11 +2,21 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { loadStripe } from '@stripe/stripe-js';
-import { Link } from 'react-router-dom';
 
 import './FullPhoto.module.css';
 import * as actions from '../../store/actions/index';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Button from '@material-ui/core/Button';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import Avatar from '@material-ui/core/Avatar';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import TitleIcon from '@material-ui/icons/Title';
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
+import { Link } from 'react-router-dom';
+
 class FullPhoto extends Component {
   // TODO Make use of state instead of redux props
   state = {
@@ -14,8 +24,11 @@ class FullPhoto extends Component {
   };
 
   componentDidMount() {
-    this.props.onFetchPhoto(this.props.match.params.id);
-    console.log(this.props.loadedPhoto);
+    // TODO anonymous no token
+    console.log('componentDidMount');
+    console.log(this.props.token);
+    this.props.onFetchPhoto(this.props.match.params.id, this.props.token);
+    // this.props.onFetchPhoto(this.props.match.params.id);
   }
 
   stripePromise = loadStripe(
@@ -47,37 +60,84 @@ class FullPhoto extends Component {
     let photo = <p style={{ textAlign: 'center' }}>Loading...</p>;
     if (this.props.loadedPhoto) {
       photo = (
-        <div className="FullPhoto">
-          <img
-            src={this.props.loadedPhoto.url}
-            alt="Photography"
-            width="625"
-            height="430"
-          />
-          <h4>Author: </h4>
-          {this.props.loadedPhoto.owner.email}
-          <h4>Title: </h4>
-          {this.props.loadedPhoto.title}
-          <h4>Price: </h4>${this.props.loadedPhoto.price}
-          <br />
-          <button
-            role="link"
-            onClick={this.handleClick}
-            // disabled={!state.stripe || state.loading}
-          >
-            Checkout
-          </button>
-          <Link
-            className="btn"
-            to={`/photos/edit/${this.props.loadedPhoto._id}`}
-          >
-            {' '}
-            Edit
-          </Link>
+        <div
+          className="FullPhoto"
+          style={{ marginTop: '5%', marginLeft: '5%' }}
+        >
+          <div style={{ float: 'left' }}>
+            <img
+              style={{
+                maxWidth: '100%',
+                height: 'auto'
+              }}
+              src={this.props.loadedPhoto.url}
+              alt="Photography"
+            />
+          </div>
+          <div style={{ float: 'left', marginLeft: '5%' }}>
+            <List>
+              <ListItem>
+                <ListItemAvatar>
+                  <Avatar>
+                    <AccountCircleIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary="Author"
+                  secondary={this.props.loadedPhoto.owner.email}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemAvatar>
+                  <Avatar>
+                    <TitleIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary="Title"
+                  secondary={this.props.loadedPhoto.title}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemAvatar>
+                  <Avatar>
+                    <MonetizationOnIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary="Price"
+                  secondary={`$${this.props.loadedPhoto.price}`}
+                />
+              </ListItem>
+            </List>
+            {this.props.loadedPhoto.isAuthor ? (
+              <Button
+                component={Link}
+                type="submit"
+                color="secondary"
+                variant="contained"
+                style={{ backgroundColor: '#f0ad4e' }}
+                to={`/photos/edit/${this.props.loadedPhoto._id}`}
+              >
+                Edit
+              </Button>
+            ) : (
+              <Button
+                component={Link}
+                color="secondary"
+                variant="contained"
+                onClick={this.handleClick}
+                style={{ backgroundColor: '#5cb85c' }}
+                // disabled={!state.stripe || state.loading}
+                to={`/photos/edit/${this.props.loadedPhoto._id}`}
+              >
+                Checkout
+              </Button>
+            )}
+          </div>
         </div>
       );
     }
-
     return <div>{photo}</div>;
   }
 }
@@ -85,14 +145,19 @@ class FullPhoto extends Component {
 const mapStateToProps = (state) => {
   return {
     // loading: state.order.loading,
-    loadedPhoto: state.photo.photo
+    loadedPhoto: state.photo.photo,
+    token: state.auth.token
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onFetchPhoto: (photoId) => dispatch(actions.fetchPhoto(photoId))
+    onFetchPhoto: (photoId, token) =>
+      dispatch(actions.fetchPhoto(photoId, token))
   };
+  // return {
+  //   onFetchPhoto: (photoId) => dispatch(actions.fetchPhoto(photoId))
+  // };
 };
 
 export default connect(

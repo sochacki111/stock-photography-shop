@@ -64,7 +64,7 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello World!');
 });
 
-const YOUR_DOMAIN = 'http://localhost:3000/checkout';
+const YOUR_DOMAIN = 'http://localhost:3000';
 
 app.post('/create-session', async (req, res) => {
   const session = await stripe.checkout.sessions.create({
@@ -83,8 +83,9 @@ app.post('/create-session', async (req, res) => {
       }
     ],
     mode: 'payment',
-    success_url: `${YOUR_DOMAIN}?success=true`,
-    cancel_url: `${YOUR_DOMAIN}?canceled=true`
+    // success_url: `${YOUR_DOMAIN}?success=true`,
+    success_url: `${YOUR_DOMAIN}/photos/${req.body.photo._id}`,
+    cancel_url: `${YOUR_DOMAIN}/photos/${req.body.photo._id}`
   });
   res.json({ id: session.id });
 });

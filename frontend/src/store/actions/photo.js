@@ -21,11 +21,19 @@ export const fetchPhotoStart = () => {
   };
 };
 
-export const fetchPhoto = (photoId) => {
+export const fetchPhoto = (photoId, token) => {
+  // export const fetchPhoto = (photoId) => {
+  console.log('fetchPhoto');
+  // console.log(token);
   return (dispatch) => {
+    const config = {
+      headers: { Authorization: `Bearer ${token}` }
+    };
     axios
-      .get('http://localhost:8080/photos/' + photoId)
+      // .get('http://localhost:8080/photos/' + photoId)
+      .get('http://localhost:8080/photos/' + photoId, config)
       .then((res) => {
+        console.log(res.data);
         dispatch(fetchPhotoSuccess(res.data));
       })
       .catch((err) => {

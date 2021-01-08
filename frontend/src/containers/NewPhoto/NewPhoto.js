@@ -9,7 +9,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { DropzoneArea } from 'material-ui-dropzone';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
@@ -112,17 +112,7 @@ const NewPhoto = (props) => {
           />
         </FormControl>
         <FormControl>
-          <InputLabel htmlFor="price">Price (in $)</InputLabel>
-          <Input
-            id="price"
-            // min="1"
-            type="number"
-            value={price || ''}
-            onChange={(event) => setPrice(Number(event.target.value))}
-          />
-        </FormControl>
-        <FormControl>
-          <InputLabel id="category" shrink>
+          <InputLabel htmlFor="category" shrink>
             Category
           </InputLabel>
           <Select
@@ -138,6 +128,16 @@ const NewPhoto = (props) => {
             <MenuItem value="Travel">Travel</MenuItem>
             <MenuItem value="Animals">Animals</MenuItem>
           </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel htmlFor="price">Price (in $)</InputLabel>
+          <Input
+            id="price"
+            // min="1"
+            type="number"
+            value={price || ''}
+            onChange={(event) => setPrice(Number(event.target.value))}
+          />
         </FormControl>
         <Button
           className={classes.uploadButton}

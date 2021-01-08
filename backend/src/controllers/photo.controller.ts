@@ -71,17 +71,25 @@ export const findOne = async (
   res: Response,
   next: NextFunction
 ): Promise<Response> => {
+  const user = (<any>req).user;
+
   try {
     const foundPhoto = await Photo.findById(req.params.id)
       .populate('owner', 'email')
+      .lean()
       .exec();
     logger.debug(`Found photo: ${foundPhoto}`);
-    return res.status(200).send(foundPhoto);
+    let isAuthor = false;
+    if (user) {
+      isAuthor = String(foundPhoto?.owner._id) === String(user._id);
+    }
+
+    return res.status(200).send({ ...foundPhoto, isAuthor });
   } catch (err) {
+    console.log(err);
     return res.send(err);
   }
 };
-
 export const createOne = async (
   req: Request,
   res: Response,
