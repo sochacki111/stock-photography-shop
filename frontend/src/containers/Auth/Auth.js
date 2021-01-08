@@ -120,14 +120,15 @@ class Auth extends Component {
     this.setState({ controls: updatedControls });
   };
 
-  submitHandler = (event) => {
+  submitHandler = async (event) => {
     // Prevent reloading of the page
     event.preventDefault();
-    this.props.onAuth(
+    await this.props.onAuth(
       this.state.controls.email.value,
       this.state.controls.password.value,
       this.state.isSignup
     );
+    this.switchAuthModeHandler();
   };
 
   switchAuthModeHandler = () => {
@@ -149,6 +150,7 @@ class Auth extends Component {
 
     let form = formElementsArray.map((formElement) => (
       <Input
+        required
         key={formElement.id}
         elementType={formElement.config.elementType}
         elementConfig={formElement.config.elementConfig}
