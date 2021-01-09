@@ -11,5 +11,9 @@ router.get('/photos/:id', jwtAuthAnon, PhotoController.findOne);
 router.post('/photos', jwtAuth, upload, PhotoController.createOne);
 router.patch('/photos/:id', jwtAuth, PhotoController.updateOne);
 router.delete('/photos/:id', jwtAuth, PhotoController.deleteOne);
+router.post(
+  '/photos/create-session',
+  PhotoController.createStripeCheckoutSession
+);
 
 export default router;

@@ -36,13 +36,16 @@ class FullPhoto extends Component {
   );
   handleClick = async (event) => {
     const stripe = await this.stripePromise;
-    const response = await fetch('http://localhost:8080/create-session', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ photo: this.props.loadedPhoto })
-    });
+    const response = await fetch(
+      'http://localhost:8080/photos/create-session',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ photo: this.props.loadedPhoto })
+      }
+    );
     const session = await response.json();
     // When the customer clicks on the button, redirect them to Checkout.
     const result = await stripe.redirectToCheckout({
@@ -129,7 +132,6 @@ class FullPhoto extends Component {
                 onClick={this.handleClick}
                 style={{ backgroundColor: '#5cb85c' }}
                 // disabled={!state.stripe || state.loading}
-                to={`/photos/edit/${this.props.loadedPhoto._id}`}
               >
                 Checkout
               </Button>

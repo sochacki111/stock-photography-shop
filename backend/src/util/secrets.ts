@@ -1,7 +1,7 @@
 import fs from 'fs';
 import dotenv from 'dotenv';
-import logger from './logger';
 import Stripe from 'stripe';
+import logger from './logger';
 
 if (fs.existsSync('.env')) {
   logger.debug('Using .env file to supply config environment variables');
