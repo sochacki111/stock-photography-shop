@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { IUser } from './user';
 
 export interface IPhoto extends Document {
   title: string;
