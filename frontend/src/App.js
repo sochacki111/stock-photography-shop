@@ -79,12 +79,11 @@ const App = () => {
       <Switch>
         <Route exact path="/" component={Photos} />
         <Route exact path="/my-photos" component={MyPhotos} />
-        <Route exact path="/auth" component={Auth} />
         <Route exact path="/logout" component={Logout} />
         <Route exact path="/new-photo" component={NewPhoto} />
-        <Route exact path="/category/:id" component={Photos} />
         <Route exact path="/photos/edit/:id" component={EditPhoto} />
         <Route exact path="/photos/:id" component={FullPhoto} />
+        <Route exact path="/auth" component={Auth} />
       </Switch>
     </div>
   );

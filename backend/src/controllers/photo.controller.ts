@@ -89,7 +89,7 @@ export const findAllPhotosByUserId = async (
     }
     const foundPhotos = await Photo.find({
       ...ids
-    });
+    }).sort({ _id: -1 });
 
     return res.status(200).send(foundPhotos);
   } catch (err) {
