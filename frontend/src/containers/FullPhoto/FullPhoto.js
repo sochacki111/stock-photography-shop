@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { loadStripe } from '@stripe/stripe-js';
-
+import { fetchPhoto } from '../../store/actions/photo';
 import './FullPhoto.module.css';
 import * as actions from '../../store/actions/index';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
@@ -17,25 +17,23 @@ import TitleIcon from '@material-ui/icons/Title';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import { Link } from 'react-router-dom';
 
-class FullPhoto extends Component {
-  // TODO Make use of state instead of redux props
-  state = {
-    loadedPhoto: null
-  };
-
-  componentDidMount() {
-    // TODO anonymous no token
-    console.log('componentDidMount');
-    console.log(this.props.token);
-    this.props.onFetchPhoto(this.props.match.params.id, this.props.token);
-    // this.props.onFetchPhoto(this.props.match.params.id);
-  }
-
-  stripePromise = loadStripe(
+const FullPhoto = (props) => {
+  const dispatch = useDispatch();
+  const photoId = props.match.params.id;
+  const stripePromise = loadStripe(
     'pk_test_51HgY4dIKCcakOEe8LkhGBHu7mfqVlO7NSt4DcxT6tdUoImXr8IXKircdK7x9gUr7x3rIjpalkTccuD3AoBabqgHu00ZwRYWmp3'
   );
-  handleClick = async (event) => {
-    const stripe = await this.stripePromise;
+  // TODO Fix first load 'loadedPhoto' as null
+  const loadedPhoto = useSelector((state) => state.photo.photo);
+  // const photoDetails = useSelector((state) => state.photo.photo);
+  // const { isAuthor, loadedPhoto } = photoDetails;
+  console.log(loadedPhoto);
+  useEffect(() => {
+    dispatch(fetchPhoto(photoId));
+  }, [dispatch, photoId]);
+
+  const handleClick = async (event) => {
+    const stripe = await stripePromise;
     const response = await fetch(
       'http://localhost:8080/photos/create-session',
       {
@@ -43,7 +41,7 @@ class FullPhoto extends Component {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ photo: this.props.loadedPhoto })
+        body: JSON.stringify({ photo: loadedPhoto })
       }
     );
     const session = await response.json();
@@ -59,110 +57,83 @@ class FullPhoto extends Component {
     }
   };
 
-  render() {
-    let photo = <p style={{ textAlign: 'center' }}>Loading...</p>;
-    if (this.props.loadedPhoto) {
-      photo = (
-        <div
-          className="FullPhoto"
-          style={{ marginTop: '5%', marginLeft: '5%' }}
-        >
-          <div style={{ float: 'left' }}>
-            <img
-              style={{
-                maxWidth: '100%',
-                height: 'auto'
-              }}
-              src={this.props.loadedPhoto.url}
-              alt="Photography"
-            />
-          </div>
-          <div style={{ float: 'left', marginLeft: '5%' }}>
-            <List>
-              <ListItem>
-                <ListItemAvatar>
-                  <Avatar>
-                    <AccountCircleIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary="Author"
-                  secondary={this.props.loadedPhoto.owner.email}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemAvatar>
-                  <Avatar>
-                    <TitleIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary="Title"
-                  secondary={this.props.loadedPhoto.title}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemAvatar>
-                  <Avatar>
-                    <MonetizationOnIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary="Price"
-                  secondary={`$${this.props.loadedPhoto.price}`}
-                />
-              </ListItem>
-            </List>
-            {this.props.loadedPhoto.isAuthor ? (
-              <Button
-                component={Link}
-                type="submit"
-                color="secondary"
-                variant="contained"
-                style={{ backgroundColor: '#f0ad4e' }}
-                to={`/photos/edit/${this.props.loadedPhoto._id}`}
-              >
-                Edit
-              </Button>
-            ) : (
-              <Button
-                component={Link}
-                color="secondary"
-                variant="contained"
-                onClick={this.handleClick}
-                style={{ backgroundColor: '#5cb85c' }}
-                // disabled={!state.stripe || state.loading}
-              >
-                Checkout
-              </Button>
-            )}
-          </div>
+  let photo = <p style={{ textAlign: 'center' }}>Loading...</p>;
+  if (loadedPhoto) {
+    console.log('loadedPhoto.isAuthor');
+    console.log(loadedPhoto.isAuthor);
+    photo = (
+      <div className="FullPhoto" style={{ marginTop: '5%', marginLeft: '5%' }}>
+        <div style={{ float: 'left' }}>
+          <img
+            style={{
+              maxWidth: '100%',
+              height: 'auto'
+            }}
+            src={loadedPhoto.url}
+            alt="Photography"
+          />
         </div>
-      );
-    }
-    return <div>{photo}</div>;
+        <div style={{ float: 'left', marginLeft: '5%' }}>
+          <List>
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar>
+                  <AccountCircleIcon />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary="Author"
+                secondary={loadedPhoto.owner.email}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar>
+                  <TitleIcon />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText primary="Title" secondary={loadedPhoto.title} />
+            </ListItem>
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar>
+                  <MonetizationOnIcon />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary="Price"
+                secondary={`$${loadedPhoto.price}`}
+              />
+            </ListItem>
+          </List>
+          {loadedPhoto.isAuthor ? (
+            <Button
+              component={Link}
+              type="submit"
+              color="secondary"
+              variant="contained"
+              style={{ backgroundColor: '#f0ad4e' }}
+              to={`/photos/edit/${loadedPhoto._id}`}
+            >
+              Edit
+            </Button>
+          ) : (
+            <Button
+              component={Link}
+              color="secondary"
+              variant="contained"
+              onClick={handleClick}
+              style={{ backgroundColor: '#5cb85c' }}
+              // disabled={!state.stripe || state.loading}
+            >
+              Checkout
+            </Button>
+          )}
+        </div>
+      </div>
+    );
   }
-}
-
-const mapStateToProps = (state) => {
-  return {
-    // loading: state.order.loading,
-    loadedPhoto: state.photo.photo,
-    token: state.auth.token
-  };
+  return <div>{photo}</div>;
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onFetchPhoto: (photoId, token) =>
-      dispatch(actions.fetchPhoto(photoId, token))
-  };
-  // return {
-  //   onFetchPhoto: (photoId) => dispatch(actions.fetchPhoto(photoId))
-  // };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withErrorHandler(FullPhoto, axios));
+export default withErrorHandler(FullPhoto, axios);

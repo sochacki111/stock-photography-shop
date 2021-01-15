@@ -21,25 +21,23 @@ export const fetchPhotoStart = () => {
   };
 };
 
-export const fetchPhoto = (photoId, token) => {
-  // export const fetchPhoto = (photoId) => {
-  console.log('fetchPhoto');
-  // console.log(token);
-  return (dispatch) => {
-    const config = {
-      headers: { Authorization: `Bearer ${token}` }
-    };
-    axios
-      // .get('http://localhost:8080/photos/' + photoId)
-      .get('http://localhost:8080/photos/' + photoId, config)
-      .then((res) => {
-        console.log(res.data);
-        dispatch(fetchPhotoSuccess(res.data));
-      })
-      .catch((err) => {
-        dispatch(fetchPhotoFail(err));
-      });
+export const fetchPhoto = (photoId) => async (dispatch, getState) => {
+  const {
+    auth: { token }
+  } = getState();
+  const config = {
+    headers: { Authorization: `Bearer ${token}` }
   };
+  try {
+    const { data } = await axios.get(
+      'http://localhost:8080/photos/' + photoId,
+      config
+    );
+    console.log(data);
+    dispatch(fetchPhotoSuccess(data));
+  } catch (err) {
+    dispatch(fetchPhotoFail(err));
+  }
 };
 
 export const addPhotoSuccess = (id, photoData) => {
