@@ -6,6 +6,50 @@ import { Link } from 'react-router-dom';
 import './EditPhoto.module.css';
 import * as actions from '../../store/actions/index';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import FormGroup from '@material-ui/core/FormGroup';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import { toast } from 'react-toastify';
+
+const styles = (theme) => ({
+  root: {
+    '& > *': {
+      margin: theme.spacing(1)
+    }
+  },
+  input: {
+    display: 'none'
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2)
+  },
+  form: {
+    width: '50%',
+    marginTop: '15vh',
+    margin: 'auto'
+  },
+  updateButton: {
+    width: '25%',
+    marginTop: '1vh',
+    margin: 'auto'
+  },
+  select: {
+    textAlign: 'left'
+  },
+  dropZone: {
+    height: '20%',
+    width: '25%'
+  }
+});
 
 class EditPhoto extends Component {
   state = {
@@ -48,99 +92,114 @@ class EditPhoto extends Component {
     });
   }
 
-  editMeetup(editedPhoto) {
+  async editPhoto(editedPhoto) {
     console.log('inside editMeetup');
-    console.log(this.props.token);
     const config = {
       // headers: { Authorization: `${this.props.token}` }
       headers: { Authorization: `Bearer ${this.props.token}` }
     };
-    console.log('config');
-    console.log(config);
-    axios
-      .patch(
-        `http://localhost:8080/photos/${this.state.id}`,
-        editedPhoto,
-        config
-      )
-      .then((response) => {
-        console.log(response);
-        // this.props.history.push('/');
-      })
-      .catch((err) => console.log(err));
+    const response = await axios.patch(
+      `http://localhost:8080/photos/${this.state.id}`,
+      editedPhoto,
+      config
+    );
+    return true;
   }
 
   photoUpdateHandler = async (e) => {
-    console.log(this.state);
+    console.log('photoUpdateHandler before');
     const editedPhoto = {
       title: this.state.title,
       category: this.state.category,
       price: this.state.price
     };
-    this.editMeetup(editedPhoto);
-
-    e.preventDefault();
+    await this.editPhoto(editedPhoto);
+    toast.success(`Photo: "${editedPhoto.title}" updated!`, {
+      position: 'top-center',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined
+    });
+    this.props.history.push(`/photos/${this.state.id}`);
+    console.log('photoUpdateHandler after');
+    // e.preventDefault();
   };
 
   render() {
+    const { classes } = this.props;
     let photo = <p style={{ textAlign: 'center' }}>Loading...</p>;
     if (this.state.id) {
       photo = (
-        <div className="FullPhoto">
-          <br />
-          <Link className="btn grey" to="/">
-            Back
-          </Link>
-          <h1>Edit Photo</h1>
-          <form>
-            {/* <img
-            src={this.props.loadedPhoto.url}-
-            alt="Photography"
-            width="625"
-            height="430"
-            /> */}
-            <div className="input-field">
-              <label htmlFor="title">Title</label>
-              <input
-                type="text"
-                name="title"
-                value={this.state.title}
-                onChange={(event) =>
-                  this.setState({ title: event.target.value })
-                }
-              />
-            </div>
-            <div className="input-field">
-              <label htmlFor="category">Category</label>
-              <input
-                type="text"
-                name="category"
-                value={this.state.category}
-                onChange={(event) =>
-                  this.setState({ category: event.target.value })
-                }
-              />
-            </div>
-            <div className="input-field">
-              <label htmlFor="price">Price</label>
-              <input
-                type="number"
-                name="price"
-                value={this.state.price}
-                onChange={(event) =>
-                  this.setState({ price: event.target.value })
-                }
-              />
-            </div>
-            <button
-              onClick={this.photoUpdateHandler}
-              type="submit"
-              value="Save"
-              className="btn"
-            >
-              Update
-            </button>
-          </form>
+        <div>
+          <div style={{ float: 'left', marginLeft: '2vh' }}>
+            <Link className="btn grey" to={`/photos/${this.state.id}`}>
+              Cancel edit
+            </Link>
+          </div>
+          <div className={classes.form}>
+            <h1>Edit Photo</h1>
+            <form>
+              <FormGroup>
+                <FormControl>
+                  <InputLabel htmlFor="title" shrink>
+                    Title
+                  </InputLabel>
+                  <Input
+                    required={true}
+                    id="title"
+                    type="text"
+                    value={this.state.title}
+                    onChange={(event) =>
+                      this.setState({ title: event.target.value })
+                    }
+                  />
+                </FormControl>
+                <FormControl>
+                  <InputLabel htmlFor="category" shrink>
+                    Category
+                  </InputLabel>
+                  <Select
+                    id="category"
+                    value={this.state.category}
+                    displayEmpty
+                    onChange={(event) =>
+                      this.setState({ category: event.target.value })
+                    }
+                    className={classes.select}
+                  >
+                    <MenuItem value="">None</MenuItem>
+                    <MenuItem value="Fashion">Fashion</MenuItem>
+                    <MenuItem value="Aerial">Aerial</MenuItem>
+                    <MenuItem value="Travel">Travel</MenuItem>
+                    <MenuItem value="Animals">Animals</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <InputLabel htmlFor="price">Price (in $)</InputLabel>
+                  <Input
+                    id="price"
+                    // min="1"
+                    type="number"
+                    value={this.state.price}
+                    onChange={(event) =>
+                      this.setState({ price: event.target.value })
+                    }
+                  />
+                </FormControl>
+              </FormGroup>
+              <Button
+                onClick={this.photoUpdateHandler}
+                className={classes.updateButton}
+                variant="contained"
+                color="primary"
+              >
+                Update
+              </Button>
+            </form>
+          </div>
         </div>
       );
     }
@@ -158,4 +217,8 @@ const mapStateToProps = (state) => {
 export default connect(
   mapStateToProps,
   null
-)(withErrorHandler(EditPhoto, axios));
+)(withErrorHandler(withStyles(styles, { withTheme: true })(EditPhoto), axios));
+// export default connect(
+//   mapStateToProps,
+//   null
+// )(withErrorHandler(EditPhoto, axios));

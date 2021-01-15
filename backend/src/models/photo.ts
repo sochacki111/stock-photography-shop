@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { IUser } from './user';
 
 export interface IPhoto extends Document {
   title: string;
@@ -9,6 +8,7 @@ export interface IPhoto extends Document {
   owner: {
     type: mongoose.Schema.Types.ObjectId;
     ref: 'User';
+    _id: any;
   };
 }
 

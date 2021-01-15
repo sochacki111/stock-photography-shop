@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import FormControl from '@material-ui/core/FormControl';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import TextField from '@material-ui/core/TextField';
+import { withStyles } from '@material-ui/core/styles';
+
+import FormGroup from '@material-ui/core/FormGroup';
 
 import axios from 'axios';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
@@ -68,62 +75,57 @@ class NewPhoto extends Component<IProps, IState> {
 
   render() {
     return (
-      <div>
+      <div style={{ marginTop: '15vh' }}>
         <h1>Upload photo</h1>
-        <form>
-          <ul>
-            <li>
-              <label>File</label>
-              <input type="file" onChange={this.fileSelectedHandler} />
-            </li>
-            {/* <li>
-              <label>Author</label>
-              <input
-                type="text"
-                value={this.state.author}
-                onChange={(event) =>
-                  this.setState({ author: event.target.value })
-                }
-              />
-            </li> */}
-            <li>
-              <label>Title</label>
-              <input
-                type="text"
-                value={this.state.title}
-                onChange={(event) =>
-                  this.setState({ title: event.target.value })
-                }
-              />
-            </li>
-            <li>
-              <label>Price</label>
-              <input
-                type="number"
-                value={this.state.price}
-                onChange={(event) =>
-                  this.setState({ price: Number(event.target.value) })
-                }
-              />
-            </li>
-            <li>
-              <label>Category</label>
-              <select
-                name="sortOrder"
-                onChange={(event) =>
-                  this.setState({ category: event.target.value })
-                }
-              >
-                <option value="">None</option>
-                <option value="Fashion">Fashion</option>
-                <option value="Aerial">Aerial</option>
-                <option value="Travel">Travel</option>
-                <option value="Animals">Animals</option>
-              </select>
-            </li>
-            <button onClick={this.fileUploadHandler}>Upload</button>
-          </ul>
-        </form>
+        {/* <form> */}
+        <FormGroup>
+          {/* <ul> */}
+          {/* <li> */}
+          {/* <label>File</label> */}
+          <InputLabel htmlFor="file">File</InputLabel>
+          <Input id="file" type="file" onChange={this.fileSelectedHandler} />
+          {/* <input type="file" onChange={this.fileSelectedHandler} /> */}
+          {/* </li> */}
+          {/* <li> */}
+          {/* <label>Title</label> */}
+          <InputLabel htmlFor="title">Title</InputLabel>
+          <TextField
+            id="title"
+            type="text"
+            value={this.state.title}
+            onChange={(event) => this.setState({ title: event.target.value })}
+          />
+          {/* </li> */}
+          {/* <li> */}
+          <InputLabel htmlFor="price">Price</InputLabel>
+          <TextField
+            id="price"
+            type="number"
+            value={this.state.price}
+            onChange={(event) =>
+              this.setState({ price: Number(event.target.value) })
+            }
+          />
+          {/* </li> */}
+          {/* <li>/ */}
+          <label>Category</label>
+          <select
+            name="sortOrder"
+            onChange={(event) =>
+              this.setState({ category: event.target.value })
+            }
+          >
+            <option value="">None</option>
+            <option value="Fashion">Fashion</option>
+            <option value="Aerial">Aerial</option>
+            <option value="Travel">Travel</option>
+            <option value="Animals">Animals</option>
+          </select>
+          {/* </li> */}
+          <button onClick={this.fileUploadHandler}>Upload</button>
+          {/* </ul> */}
+          {/* </form> */}
+        </FormGroup>
       </div>
     );
   }
@@ -142,6 +144,10 @@ const mapDispatchToProps = (dispatch: any) => {
   };
 };
 
+// export default connect(
+//   mapStateToProps,
+//   mapDispatchToProps
+// )(withErrorHandler(NewPhoto, axios));
 export default connect(
   mapStateToProps,
   mapDispatchToProps

@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { RouteComponentProps, Link } from 'react-router-dom';
+import GridListTile from '@material-ui/core/GridListTile';
+import GridList from '@material-ui/core/GridList';
 
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import { Photo } from '../../components/Photo/Photo';
@@ -55,24 +57,25 @@ class MyPhotos extends Component<IProps, IState> {
   };
 
   render() {
-    let photos: JSX.Element[] | null = null;
+    let photos: JSX.Element | null = null;
 
-    if (this.state.error) {
-      return <p style={{ textAlign: 'center' }}>Something went wrong!</p>;
-    } else if (!this.state.photos.length) {
-      return <p style={{ textAlign: 'center' }}>No photos!</p>;
-    } else {
-      photos = this.state.photos.map((photo: Photo) => {
-        return (
-          <Link to={`/photos/${photo._id}`} key={photo._id}>
-            <Photo
-              title={photo.title}
-              url={photo.url}
-              price={photo.price}
-            ></Photo>
-          </Link>
-        );
-      });
+    if (Array.isArray(this.state.photos)) {
+      photos = (
+        <GridList cellHeight={160} cols={4} style={{ marginTop: '15vh' }}>
+          {this.state.photos.map((photo) => (
+            <GridListTile cols={2} rows={1} key={photo._id}>
+              <Link to={'/photos/' + photo._id}>
+                <img
+                  src={photo.url}
+                  alt={photo.title}
+                  // className="MuiGridListTile-imgFullHeight"
+                  className="MuiGridListTile-imgFullWidth"
+                />
+              </Link>
+            </GridListTile>
+          ))}
+        </GridList>
+      );
     }
 
     return (

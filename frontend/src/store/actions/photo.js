@@ -21,16 +21,23 @@ export const fetchPhotoStart = () => {
   };
 };
 
-export const fetchPhoto = (photoId) => {
-  return dispatch => {
-    axios.get('http://localhost:8080/photos/' + photoId)
-      .then(res => {
-        dispatch(fetchPhotoSuccess(res.data));
-      })
-      .catch(err => {
-        dispatch(fetchPhotoFail(err));
-      });
+export const fetchPhoto = (photoId) => async (dispatch, getState) => {
+  const {
+    auth: { token }
+  } = getState();
+  const config = {
+    headers: { Authorization: `Bearer ${token}` }
   };
+  try {
+    const { data } = await axios.get(
+      'http://localhost:8080/photos/' + photoId,
+      config
+    );
+    console.log(data);
+    dispatch(fetchPhotoSuccess(data));
+  } catch (err) {
+    dispatch(fetchPhotoFail(err));
+  }
 };
 
 export const addPhotoSuccess = (id, photoData) => {
@@ -46,7 +53,7 @@ export const addPhotoFail = (error) => {
     type: actionTypes.ADD_PHOTO_FAIL,
     error: error
   };
-}
+};
 
 export const addPhotoStart = () => {
   return {
@@ -58,19 +65,20 @@ export const purchasePhoto = () => {
   return {
     type: actionTypes.ADD_PHOTO_START
   };
-}
+};
 
 export const addPhoto = (photoData, token) => {
-  return dispatch => {
+  return (dispatch) => {
     dispatch(addPhotoStart());
     const config = {
       headers: { Authorization: `Bearer ${token}` }
     };
-    axios.post('/photos', photoData, config)
-      .then(response => {
+    axios
+      .post('/photos', photoData, config)
+      .then((response) => {
         dispatch(addPhotoSuccess(response.data._id, photoData));
       })
-      .catch(error => {
+      .catch((error) => {
         dispatch(addPhotoFail(error));
       });
   };

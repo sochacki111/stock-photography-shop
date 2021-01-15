@@ -2,13 +2,21 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { RouteComponentProps, Link } from 'react-router-dom';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import Input from '@material-ui/core/Input';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Button from '@material-ui/core/Button';
+import FormGroup from '@material-ui/core/FormGroup';
 
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import { Photo } from '../../components/Photo/Photo';
 import './Photos.css';
-
 interface IProps extends RouteComponentProps {
-  isAuthenticated: boolean;
+  isAuthenticated: boolean; // TODO Delete?
   token: string;
   // TODO refactor
   match: any;
@@ -21,7 +29,6 @@ interface Photo {
     id: string;
     email: string;
   };
-  // author: string;
   url: string;
   price: number;
 }
@@ -29,7 +36,6 @@ interface Photo {
 interface IState {
   photos: Photo[];
   error: string | boolean;
-  purchasing: boolean;
   category: string;
   searchKeyword: string;
   sortOrder: string;
@@ -41,8 +47,7 @@ class Photos extends Component<IProps, IState> {
     error: false,
     category: this.props.match.params.id ? this.props.match.params.id : '',
     searchKeyword: '',
-    sortOrder: '',
-    purchasing: false // TODO delete
+    sortOrder: ''
   };
 
   componentDidMount() {
@@ -61,7 +66,6 @@ class Photos extends Component<IProps, IState> {
   async fetchPhotos() {
     try {
       const config = {
-        // headers: { Authorization: `${this.props.token}` }
         headers: { Authorization: `Bearer ${this.props.token}` }
       };
       const response = await axios.get(
@@ -82,17 +86,15 @@ class Photos extends Component<IProps, IState> {
     // this.setState({ searchKeyword: e.target })
   };
 
-  sortHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  // sortHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  sortHandler = (e: any) => {
     this.setState({ sortOrder: e.target.value });
   };
 
-  categoryHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  // categoryHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  categoryHandler = (e: any) => {
     this.setState({ category: e.target.value });
   };
-
-  // postSelectedHandler = (photoId: string) => {
-  //   this.props.history.push('/photos/' + photoId);
-  // };
 
   render() {
     // TODO Add error message while server is not responding
@@ -104,58 +106,87 @@ class Photos extends Component<IProps, IState> {
     //     );
     //   });
     // }
-    let photos: JSX.Element[] = [];
+    let photos: JSX.Element | null = null;
     if (Array.isArray(this.state.photos)) {
-      photos = this.state.photos.map((photo: Photo) => {
-        return (
-          <Link to={'/photos/' + photo._id} key={photo._id}>
-            <Photo
-              title={photo.title}
-              // author=""
-              // author={photo.author}
-              // author={photo.author}
-              url={photo.url}
-              price={photo.price}
-              // clicked={() => this.postSelectedHandler( photo._id )}
-            ></Photo>
-          </Link>
-        );
-      });
+      photos = (
+        <GridList cellHeight={160} cols={4}>
+          {this.state.photos.map((photo) => (
+            <GridListTile cols={2} rows={1} key={photo._id}>
+              <Link to={'/photos/' + photo._id}>
+                <img
+                  src={photo.url}
+                  alt={photo.title}
+                  // className="MuiGridListTile-imgFullHeight"
+                  className="MuiGridListTile-imgFullWidth"
+                />
+              </Link>
+            </GridListTile>
+          ))}
+        </GridList>
+      );
     }
 
     return (
-      <div>
-        <ul className="filter">
-          <li>
-            <form onSubmit={this.submitHandler}>
-              <input
-                name="searchKeyword"
+      <div style={{ marginTop: '15vh' }}>
+        <FormGroup
+          style={{ width: '20%', margin: 'auto', marginBottom: '5vh' }}
+        >
+          <FormControl>
+            <form onSubmit={this.submitHandler} style={{ width: '100%' }}>
+              <InputLabel htmlFor="searchKeyword">Search keyword</InputLabel>
+              <Input
+                style={{ width: '75%', float: 'left' }}
+                id="searchKeyword"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   this.setState({ searchKeyword: e.target.value })
                 }
               />
-              <button type="submit">Search</button>
+              <Button
+                type="submit"
+                style={{ marginTop: '1.2vh', width: '20%', float: 'right' }}
+                variant="contained"
+                color="primary"
+              >
+                Search
+              </Button>
             </form>
-          </li>
-          <li>
-            Sort By{' '}
-            <select name="sortOrder" onChange={this.sortHandler}>
-              <option value="">Newest</option>
-              <option value="lowest">Price - Low to High</option>
-              <option value="highest">Price - High to Low</option>
-            </select>
-          </li>
-          <li>
-            Category{' '}
-            <select name="sortOrder" onChange={this.categoryHandler}>
-              <option value="">None</option>
-              <option value="Fashion">Fashion</option>
-              <option value="Aerial">Aerial</option>
-              <option value="Travel">Travel</option>
-              <option value="Animals">Animals</option>
-            </select>
-          </li>
-        </ul>
+          </FormControl>
+          <FormControl>
+            <InputLabel htmlFor="sortOrder" shrink>
+              Sort By
+            </InputLabel>
+            <Select
+              id="sortOrder"
+              onChange={this.sortHandler}
+              style={{ textAlign: 'left' }}
+              displayEmpty
+              value={this.state.sortOrder}
+            >
+              <MenuItem value="">Newest</MenuItem>
+              <MenuItem value="oldest">Oldest</MenuItem>
+              <MenuItem value="lowest">Price - Low to High</MenuItem>
+              <MenuItem value="highest">Price - High to Low</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl>
+            <InputLabel htmlFor="category" shrink>
+              Category
+            </InputLabel>
+            <Select
+              name="category"
+              onChange={this.categoryHandler}
+              style={{ textAlign: 'left' }}
+              displayEmpty
+              value={this.state.category}
+            >
+              <MenuItem value="">All</MenuItem>
+              <MenuItem value="Fashion">Fashion</MenuItem>
+              <MenuItem value="Aerial">Aerial</MenuItem>
+              <MenuItem value="Travel">Travel</MenuItem>
+              <MenuItem value="Animals">Animals</MenuItem>
+            </Select>
+          </FormControl>
+        </FormGroup>
         <section className="Photos">{photos}</section>
       </div>
     );
@@ -167,7 +198,5 @@ const mapStateToProps = (state: any) => {
     token: state.auth.token
   };
 };
-
-// export default Photos;
 
 export default connect(mapStateToProps, null)(withErrorHandler(Photos, axios));

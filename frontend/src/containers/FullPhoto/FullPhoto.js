@@ -1,35 +1,49 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { loadStripe } from '@stripe/stripe-js';
-import { Link } from 'react-router-dom';
-
+import { fetchPhoto } from '../../store/actions/photo';
 import './FullPhoto.module.css';
 import * as actions from '../../store/actions/index';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
-class FullPhoto extends Component {
-  // TODO Make use of state instead of redux props
-  state = {
-    loadedPhoto: null
-  };
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Button from '@material-ui/core/Button';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import Avatar from '@material-ui/core/Avatar';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import TitleIcon from '@material-ui/icons/Title';
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
+import { Link } from 'react-router-dom';
 
-  componentDidMount() {
-    this.props.onFetchPhoto(this.props.match.params.id);
-    console.log(this.props.loadedPhoto);
-  }
-
-  stripePromise = loadStripe(
+const FullPhoto = (props) => {
+  const dispatch = useDispatch();
+  const photoId = props.match.params.id;
+  const stripePromise = loadStripe(
     'pk_test_51HgY4dIKCcakOEe8LkhGBHu7mfqVlO7NSt4DcxT6tdUoImXr8IXKircdK7x9gUr7x3rIjpalkTccuD3AoBabqgHu00ZwRYWmp3'
   );
-  handleClick = async (event) => {
-    const stripe = await this.stripePromise;
-    const response = await fetch('http://localhost:8080/create-session', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ photo: this.props.loadedPhoto })
-    });
+  // TODO Fix first load 'loadedPhoto' as null
+  const loadedPhoto = useSelector((state) => state.photo.photo);
+  // const photoDetails = useSelector((state) => state.photo.photo);
+  // const { isAuthor, loadedPhoto } = photoDetails;
+  console.log(loadedPhoto);
+  useEffect(() => {
+    dispatch(fetchPhoto(photoId));
+  }, [dispatch, photoId]);
+
+  const handleClick = async (event) => {
+    const stripe = await stripePromise;
+    const response = await fetch(
+      'http://localhost:8080/photos/create-session',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ photo: loadedPhoto })
+      }
+    );
     const session = await response.json();
     // When the customer clicks on the button, redirect them to Checkout.
     const result = await stripe.redirectToCheckout({
@@ -43,59 +57,83 @@ class FullPhoto extends Component {
     }
   };
 
-  render() {
-    let photo = <p style={{ textAlign: 'center' }}>Loading...</p>;
-    if (this.props.loadedPhoto) {
-      photo = (
-        <div className="FullPhoto">
+  let photo = <p style={{ textAlign: 'center' }}>Loading...</p>;
+  if (loadedPhoto) {
+    console.log('loadedPhoto.isAuthor');
+    console.log(loadedPhoto.isAuthor);
+    photo = (
+      <div className="FullPhoto" style={{ marginTop: '5%', marginLeft: '5%' }}>
+        <div style={{ float: 'left' }}>
           <img
-            src={this.props.loadedPhoto.url}
+            style={{
+              maxWidth: '100%',
+              height: 'auto'
+            }}
+            src={loadedPhoto.url}
             alt="Photography"
-            width="625"
-            height="430"
           />
-          <h4>Author: </h4>
-          {this.props.loadedPhoto.owner.email}
-          <h4>Title: </h4>
-          {this.props.loadedPhoto.title}
-          <h4>Price: </h4>${this.props.loadedPhoto.price}
-          <br />
-          <button
-            role="link"
-            onClick={this.handleClick}
-            // disabled={!state.stripe || state.loading}
-          >
-            Checkout
-          </button>
-          <Link
-            className="btn"
-            to={`/photos/edit/${this.props.loadedPhoto._id}`}
-          >
-            {' '}
-            Edit
-          </Link>
         </div>
-      );
-    }
-
-    return <div>{photo}</div>;
+        <div style={{ float: 'left', marginLeft: '5%' }}>
+          <List>
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar>
+                  <AccountCircleIcon />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary="Author"
+                secondary={loadedPhoto.owner.email}
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar>
+                  <TitleIcon />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText primary="Title" secondary={loadedPhoto.title} />
+            </ListItem>
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar>
+                  <MonetizationOnIcon />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary="Price"
+                secondary={`$${loadedPhoto.price}`}
+              />
+            </ListItem>
+          </List>
+          {loadedPhoto.isAuthor ? (
+            <Button
+              component={Link}
+              type="submit"
+              color="secondary"
+              variant="contained"
+              style={{ backgroundColor: '#f0ad4e' }}
+              to={`/photos/edit/${loadedPhoto._id}`}
+            >
+              Edit
+            </Button>
+          ) : (
+            <Button
+              component={Link}
+              color="secondary"
+              variant="contained"
+              onClick={handleClick}
+              style={{ backgroundColor: '#5cb85c' }}
+              // disabled={!state.stripe || state.loading}
+            >
+              Checkout
+            </Button>
+          )}
+        </div>
+      </div>
+    );
   }
-}
-
-const mapStateToProps = (state) => {
-  return {
-    // loading: state.order.loading,
-    loadedPhoto: state.photo.photo
-  };
+  return <div>{photo}</div>;
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onFetchPhoto: (photoId) => dispatch(actions.fetchPhoto(photoId))
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withErrorHandler(FullPhoto, axios));
+export default withErrorHandler(FullPhoto, axios);
