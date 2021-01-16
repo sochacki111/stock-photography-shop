@@ -3,10 +3,12 @@ import { updateObject } from '../utility';
 
 const initialState = {
   photo: null,
-  photos: [],
   loading: false,
-  added: false,
-  purchased: false
+  success: false,
+  error: null,
+  updateLoading: false,
+  updateSuccess: false,
+  updateError: null
 };
 
 const addPhotoInit = (state, action) => {
@@ -35,30 +37,71 @@ const purchasePhotoSuccess = (state, action) => {
 };
 
 const fetchPhotoStart = (state, action) => {
-  return updateObject(state, { photo: action.photo });
+  return updateObject(state, { loading: true });
 };
 
 const fetchPhotoSuccess = (state, action) => {
   return updateObject(state, {
+    loading: false,
     photo: action.photo
   });
 };
 
 const fetchPhotoFail = (state, action) => {
-  return updateObject(state, { loading: false });
+  return updateObject(state, {
+    loading: false,
+    error: action.payload
+  });
+};
+
+const updatePhotoSuccess = (state, action) => {
+  return updateObject({ updateLoading: false, updateSuccess: true });
+};
+
+const updatePhotoFail = (state, action) => {
+  return updateObject({ updateLoading: false, updateError: action.payload });
+};
+
+const updatePhotoRequest = (state, action) => {
+  return updateObject(state, { updateLoading: true });
+};
+
+const updatePhotoReset = (state, action) => {
+  return updateObject(state, {
+    updateLoading: false,
+    updateSuccess: false,
+    updateError: null
+  });
 };
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case actionTypes.ADD_PHOTO_INIT: return addPhotoInit(state, action);
-    case actionTypes.ADD_PHOTO_START: return addPhotoStart(state, action);
-    case actionTypes.ADD_PHOTO_SUCCESS: return addPhotoSuccess(state, action);
-    case actionTypes.ADD_PHOTO_FAIL: return addPhotoFail(state, action);
-    case actionTypes.PURCHASE_PHOTO: return purchasePhotoSuccess(state, action);
-    case actionTypes.FETCH_PHOTO_START: return fetchPhotoStart(state, action);
-    case actionTypes.FETCH_PHOTO_SUCCESS: return fetchPhotoSuccess(state, action);
-    case actionTypes.FETCH_PHOTO_FAIL: return fetchPhotoFail(state, action);
-    default: return state;
+    case actionTypes.ADD_PHOTO_INIT:
+      return addPhotoInit(state, action);
+    case actionTypes.ADD_PHOTO_START:
+      return addPhotoStart(state, action);
+    case actionTypes.ADD_PHOTO_SUCCESS:
+      return addPhotoSuccess(state, action);
+    case actionTypes.ADD_PHOTO_FAIL:
+      return addPhotoFail(state, action);
+    case actionTypes.PURCHASE_PHOTO:
+      return purchasePhotoSuccess(state, action);
+    case actionTypes.FETCH_PHOTO_START:
+      return fetchPhotoStart(state, action);
+    case actionTypes.FETCH_PHOTO_SUCCESS:
+      return fetchPhotoSuccess(state, action);
+    case actionTypes.FETCH_PHOTO_FAIL:
+      return fetchPhotoFail(state, action);
+    case actionTypes.UPDATE_PHOTO_REQUEST:
+      return updatePhotoRequest(state, action);
+    case actionTypes.UPDATE_PHOTO_SUCCESS:
+      return updatePhotoSuccess(state, action);
+    case actionTypes.UPDATE_PHOTO_FAIL:
+      return updatePhotoFail(state, action);
+    case actionTypes.UPDATE_PHOTO_RESET:
+      return updatePhotoReset(state, action);
+    default:
+      return state;
   }
 };
 

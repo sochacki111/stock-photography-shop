@@ -51,16 +51,7 @@ export const auth = (email, password, isSignup) => {
     }
     try {
       const res = await axios.post(url, authData);
-      console.log(res);
-      toast.success(`User: "${email}" has been created!`, {
-        position: 'top-center',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined
-      });
+      toast.success(`User: "${email}" has been created!`);
       // Capture data sent from the server
       // TODO Refactor. Only dispatch on sign in
       if (isSignup) {
