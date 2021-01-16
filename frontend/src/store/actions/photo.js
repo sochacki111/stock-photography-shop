@@ -89,3 +89,22 @@ export const addPhotoInit = () => {
     type: actionTypes.ADD_PHOTO_INIT
   };
 };
+
+export const updatePhoto = (photo) => async (dispatch, getState) => {
+  dispatch({ type: actionTypes.UPDATE_PHOTO_REQUEST, payload: photo });
+  const {
+    auth: { token }
+  } = getState();
+  try {
+    const { data } = await axios.patch(`/photos/${photo._id}`, photo, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    dispatch({ type: actionTypes.UPDATE_PHOTO_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    dispatch({ type: actionTypes.UPDATE_PHOTO_FAIL, error: message });
+  }
+};
