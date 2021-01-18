@@ -1,5 +1,6 @@
 import * as actionTypes from './actionTypes';
 import axios from '../../axios-photos';
+import { toast } from 'react-toastify';
 
 export const fetchPhotoSuccess = (photo) => {
   return {
@@ -33,7 +34,6 @@ export const fetchPhoto = (photoId) => async (dispatch, getState) => {
       'http://localhost:8080/photos/' + photoId,
       config
     );
-    console.log(data);
     dispatch(fetchPhotoSuccess(data));
   } catch (err) {
     dispatch(fetchPhotoFail(err));

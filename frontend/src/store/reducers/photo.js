@@ -37,17 +37,41 @@ const purchasePhotoSuccess = (state, action) => {
 };
 
 const fetchPhotoStart = (state, action) => {
-  return updateObject(state, { photo: action.photo });
+  return updateObject(state, { loading: true });
 };
 
 const fetchPhotoSuccess = (state, action) => {
   return updateObject(state, {
+    loading: false,
     photo: action.photo
   });
 };
 
 const fetchPhotoFail = (state, action) => {
-  return updateObject(state, { loading: false });
+  return updateObject(state, {
+    loading: false,
+    error: action.payload
+  });
+};
+
+const updatePhotoSuccess = (state, action) => {
+  return updateObject({ updateLoading: false, updateSuccess: true });
+};
+
+const updatePhotoFail = (state, action) => {
+  return updateObject({ updateLoading: false, updateError: action.payload });
+};
+
+const updatePhotoRequest = (state, action) => {
+  return updateObject(state, { updateLoading: true });
+};
+
+const updatePhotoReset = (state, action) => {
+  return updateObject(state, {
+    updateLoading: false,
+    updateSuccess: false,
+    updateError: null
+  });
 };
 
 const updatePhotoSuccess = (state, action) => {

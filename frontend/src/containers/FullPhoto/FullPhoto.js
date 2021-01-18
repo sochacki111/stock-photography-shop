@@ -27,40 +27,40 @@ const FullPhoto = (props) => {
   const loadedPhoto = useSelector((state) => state.photo.photo);
   // const photoDetails = useSelector((state) => state.photo.photo);
   // const { isAuthor, loadedPhoto } = photoDetails;
-  console.log(loadedPhoto);
+  const token = useSelector((state) => state.auth.token);
   useEffect(() => {
     dispatch(fetchPhoto(photoId));
   }, [dispatch, photoId]);
 
   const handleClick = async (event) => {
-    const stripe = await stripePromise;
-    const response = await fetch(
-      'http://localhost:8080/photos/create-session',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ photo: loadedPhoto })
+    try {
+      const stripe = await stripePromise;
+      const config = {
+        headers: { Authorization: `Bearer ${token}` }
+      };
+      const { data } = await axios.post(
+        'http://localhost:8080/photos/create-session',
+        { photo: loadedPhoto },
+        config
+      );
+      const session = await data;
+      // When the customer clicks on the button, redirect them to Checkout.
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.id
+      });
+      if (result.error) {
+        // If `redirectToCheckout` fails due to a browser or network
+        // error, display the localized error message to your customer
+        // using `result.error.message`.
+        console.log(result.error.message);
       }
-    );
-    const session = await response.json();
-    // When the customer clicks on the button, redirect them to Checkout.
-    const result = await stripe.redirectToCheckout({
-      sessionId: session.id
-    });
-    if (result.error) {
-      // If `redirectToCheckout` fails due to a browser or network
-      // error, display the localized error message to your customer
-      // using `result.error.message`.
-      console.log(result.error.message);
+    } catch (err) {
+      console.log(err);
     }
   };
 
   let photo = <p style={{ textAlign: 'center' }}>Loading...</p>;
   if (loadedPhoto) {
-    console.log('loadedPhoto.isAuthor');
-    console.log(loadedPhoto.isAuthor);
     photo = (
       <div className="FullPhoto" style={{ marginTop: '5%', marginLeft: '5%' }}>
         <div style={{ float: 'left' }}>

@@ -69,11 +69,11 @@ const EditPhoto = (props) => {
     updateSuccess,
     updateError
   } = photoDetails;
-
   const dispatch = useDispatch();
   useEffect(() => {
     if (updateSuccess) {
-      props.history.push('/productlist');
+      toast.success(`Photo: "${title}" updated!`);
+      props.history.push(`/photos/${photoId}`);
     }
     if (!photo || photo._id !== photoId || updateSuccess) {
       dispatch({ type: UPDATE_PHOTO_RESET });
@@ -89,18 +89,7 @@ const EditPhoto = (props) => {
     e.preventDefault();
 
     dispatch(updatePhoto({ _id: photoId, title, category, price }));
-    // TODO Move somewhere else
-    toast.success(`Photo: "${title}" updated!`, {
-      position: 'top-center',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined
-    });
-    props.history.push(`/photos/${photoId}`);
-    console.log('photoUpdateHandler after');
+    // props.history.push(`/photos/${photoId}`);
   };
 
   let photo2 = <p style={{ textAlign: 'center' }}>Loading...</p>;
@@ -114,67 +103,66 @@ const EditPhoto = (props) => {
         </div>
         <div className={classes.form}>
           <h1>Edit Photo</h1>
-          <form onSubmit={submitHandler}>
-            <FormGroup>
-              <FormControl>
-                <InputLabel htmlFor="title" shrink>
-                  Title
-                </InputLabel>
-                <Input
-                  required={true}
-                  id="title"
-                  type="text"
-                  value={title}
-                  onChange={(e) =>
-                    // this.setState({ title: e.target.value })
-                    setTitle(e.target.value)
-                  }
-                />
-              </FormControl>
-              <FormControl>
-                <InputLabel htmlFor="category" shrink>
-                  Category
-                </InputLabel>
-                <Select
-                  id="category"
-                  value={category}
-                  displayEmpty
-                  onChange={(e) =>
-                    // this.setState({ category: e.target.value })
-                    setCategory(e.target.value)
-                  }
-                  className={classes.select}
-                >
-                  <MenuItem value="">None</MenuItem>
-                  <MenuItem value="Fashion">Fashion</MenuItem>
-                  <MenuItem value="Aerial">Aerial</MenuItem>
-                  <MenuItem value="Travel">Travel</MenuItem>
-                  <MenuItem value="Animals">Animals</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl>
-                <InputLabel htmlFor="price">Price (in $)</InputLabel>
-                <Input
-                  id="price"
-                  // min="1"
-                  type="number"
-                  value={price}
-                  onChange={(e) =>
-                    // this.setState({ price: e.target.value })
-                    setPrice(e.target.value)
-                  }
-                />
-              </FormControl>
-            </FormGroup>
-            <Button
-              type="submit"
-              className={classes.updateButton}
-              variant="contained"
-              color="primary"
-            >
-              Update
-            </Button>
-          </form>
+          {updateLoading && <p>Update Loading</p>}
+          {updateError && <p>{updateError}</p>}
+          {loading ? (
+            <p>Fetch Loading</p>
+          ) : error ? (
+            <p>{error}</p>
+          ) : (
+            <form onSubmit={submitHandler}>
+              <FormGroup>
+                <FormControl>
+                  <InputLabel htmlFor="title" shrink>
+                    Title
+                  </InputLabel>
+                  <Input
+                    required={true}
+                    id="title"
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl>
+                  <InputLabel htmlFor="category" shrink>
+                    Category
+                  </InputLabel>
+                  <Select
+                    id="category"
+                    value={category}
+                    displayEmpty
+                    onChange={(e) => setCategory(e.target.value)}
+                    className={classes.select}
+                  >
+                    <MenuItem value="">None</MenuItem>
+                    <MenuItem value="Fashion">Fashion</MenuItem>
+                    <MenuItem value="Aerial">Aerial</MenuItem>
+                    <MenuItem value="Travel">Travel</MenuItem>
+                    <MenuItem value="Animals">Animals</MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <InputLabel htmlFor="price">Price (in $)</InputLabel>
+                  <Input
+                    id="price"
+                    // min="1"
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                  />
+                </FormControl>
+              </FormGroup>
+              <Button
+                type="submit"
+                className={classes.updateButton}
+                variant="contained"
+                color="primary"
+              >
+                Update
+              </Button>
+            </form>
+          )}
         </div>
       </div>
     );
