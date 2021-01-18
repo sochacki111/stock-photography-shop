@@ -8,6 +8,16 @@ import s3 from '../config/s3.config';
 import User from '../models/user';
 import stripe from '../config/stripe';
 
+declare global {
+  namespace Express {
+    interface User {
+      _id: string;
+      email: string;
+    }
+  }
+}
+
+// TODO Refactor const { user } = req;
 export const findAll = async (
   req: Request,
   res: Response,
@@ -103,6 +113,7 @@ export const findOne = async (
   next: NextFunction
 ): Promise<Response> => {
   const user = (<any>req).user;
+  console.log(user);
 
   try {
     const foundPhoto = await Photo.findById(req.params.id)
@@ -196,26 +207,35 @@ export const createStripeCheckoutSession = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ['card'],
-    line_items: [
-      {
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: req.body.photo.title,
-            images: [req.body.photo.url]
+): Promise<Response> => {
+  const { user } = req;
+  const customerEmail = user ? { customer_email: user.email } : {};
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: req.body.photo.title,
+              images: [req.body.photo.url]
+            },
+            unit_amount: req.body.photo.price * 100
           },
-          unit_amount: req.body.photo.price * 100
-        },
-        quantity: 1
-      }
-    ],
-    mode: 'payment',
-    // success_url: `${YOUR_DOMAIN}?success=true`,
-    success_url: `${process.env.DOMAIN}/photos/${req.body.photo._id}`,
-    cancel_url: `${process.env.DOMAIN}/photos/${req.body.photo._id}`
-  });
-  res.json({ id: session.id });
+          quantity: 1
+        }
+      ],
+      ...customerEmail,
+      mode: 'payment',
+      // success_url: `${YOUR_DOMAIN}?success=true`,
+      success_url: `${process.env.DOMAIN}/photos/${req.body.photo._id}`,
+      cancel_url: `${process.env.DOMAIN}/photos/${req.body.photo._id}`
+    });
+
+    return res.status(200).json({ id: session.id });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send(err);
+  }
 };

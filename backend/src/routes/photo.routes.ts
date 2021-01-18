@@ -13,6 +13,7 @@ router.patch('/photos/:id', jwtAuth, PhotoController.updateOne);
 router.delete('/photos/:id', jwtAuth, PhotoController.deleteOne);
 router.post(
   '/photos/create-session',
+  jwtAuthAnon,
   PhotoController.createStripeCheckoutSession
 );
 
