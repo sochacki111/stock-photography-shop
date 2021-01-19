@@ -58,10 +58,6 @@ const updatePhotoSuccess = (state, action) => {
   return updateObject({ updateLoading: false, updateSuccess: true });
 };
 
-const updatePhotoFail = (state, action) => {
-  return updateObject({ updateLoading: false, updateError: action.payload });
-};
-
 const updatePhotoRequest = (state, action) => {
   return updateObject(state, { updateLoading: true });
 };
@@ -74,20 +70,8 @@ const updatePhotoReset = (state, action) => {
   });
 };
 
-const updatePhotoSuccess = (state, action) => {
-  return updateObject({ updateLoading: false, updateSuccess: true });
-};
-
 const updatePhotoFail = (state, action) => {
   return updateObject({ updateLoading: false, updateError: action.payload });
-};
-
-const updatePhotoRequest = (state, action) => {
-  return updateObject(state, { updateLoading: true });
-};
-
-const updatePhotoReset = (state, action) => {
-  return updateObject(state, {});
 };
 
 const reducer = (state = initialState, action) => {

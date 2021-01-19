@@ -1,10 +1,2 @@
-export {
-    auth,
-    logout
-} from './auth';
-export {
-    addPhoto,
-    addPhotoInit,
-    purchasePhoto,
-    fetchPhoto
-} from './photo';
+export { auth, logout, authCheckState } from './auth';
+export { addPhoto, addPhotoInit, purchasePhoto, fetchPhoto } from './photo';

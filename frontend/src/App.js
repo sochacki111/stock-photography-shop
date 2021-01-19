@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, BrowserRouter, Switch, Link } from 'react-router-dom';
 import { Tabs, Tab, AppBar } from '@material-ui/core';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 
-import { createStore } from 'redux';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import './App.css';
 import NewPhoto from './containers/NewPhoto/NewPhoto';
@@ -16,10 +15,15 @@ import FullPhoto from './containers/FullPhoto/FullPhoto';
 import MyPhotos from './containers/MyPhotos/MyPhotos';
 import EditPhoto from './containers/EditPhoto/EditPhoto';
 import Auxiliary from './hoc/Auxiliary/Auxiliary';
+import * as actions from './store/actions/index';
 
 const App = () => {
   const routes = ['/', '/auth', '/new-photo', '/my-photos', '/logout'];
   const isAuthenticated = useSelector((state) => state.auth.token !== null);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(actions.authCheckState());
+  }, [dispatch]);
 
   return (
     <div className="App">
