@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Route, BrowserRouter, Switch, Link } from 'react-router-dom';
+import { Route, BrowserRouter, Switch, Link, Redirect } from 'react-router-dom';
 import { Tabs, Tab, AppBar } from '@material-ui/core';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 
@@ -18,12 +18,35 @@ import Auxiliary from './hoc/Auxiliary/Auxiliary';
 import * as actions from './store/actions/index';
 
 const App = () => {
-  const routes = ['/', '/auth', '/new-photo', '/my-photos', '/logout'];
+  const routes2 = ['/', '/auth', '/new-photo', '/my-photos', '/logout'];
   const isAuthenticated = useSelector((state) => state.auth.token !== null);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(actions.authCheckState());
   }, [dispatch]);
+
+  let routes = (
+    <Switch>
+      <Route path="/photos/:id" component={FullPhoto} />
+      <Route path="/auth" component={Auth} />
+      <Route path="/" exact component={Photos} />
+      <Redirect to="/" />
+    </Switch>
+  );
+
+  if (isAuthenticated) {
+    routes = (
+      <Switch>
+        <Route path="/new-photo" component={NewPhoto} />
+        <Route path="/my-photos" component={MyPhotos} />
+        <Route path="/logout" component={Logout} />
+        <Route path="/photos/:id" component={FullPhoto} />
+        <Route path="/photos/edit/:id" component={EditPhoto} />
+        <Route path="/" exact component={Photos} />
+        <Redirect to="/" />
+      </Switch>
+    );
+  }
 
   return (
     <div className="App">
@@ -43,7 +66,7 @@ const App = () => {
                 // value={routes[0]}
                 label="Stock photography"
                 component={Link}
-                to={routes[0]}
+                to={routes2[0]}
               />
 
               {isAuthenticated ? (
@@ -52,19 +75,19 @@ const App = () => {
                     // value={routes[2]}
                     label="New Photo"
                     component={Link}
-                    to={routes[2]}
+                    to={routes2[2]}
                   />
                   <Tab
                     // value={routes[3]}
                     label="My Photos"
                     component={Link}
-                    to={routes[3]}
+                    to={routes2[3]}
                   />
                   <Tab
                     // value={routes[4]}
                     label="Log out"
                     component={Link}
-                    to={routes[4]}
+                    to={routes2[4]}
                   />
                 </Auxiliary>
               ) : (
@@ -72,7 +95,7 @@ const App = () => {
                   // value={routes[1]}
                   label="Log in"
                   component={Link}
-                  to={routes[1]}
+                  to={routes2[1]}
                 />
               )}
             </Tabs>
@@ -80,15 +103,7 @@ const App = () => {
         )}
       />
 
-      <Switch>
-        <Route exact path="/" component={Photos} />
-        <Route exact path="/my-photos" component={MyPhotos} />
-        <Route exact path="/logout" component={Logout} />
-        <Route exact path="/new-photo" component={NewPhoto} />
-        <Route exact path="/photos/edit/:id" component={EditPhoto} />
-        <Route exact path="/photos/:id" component={FullPhoto} />
-        <Route exact path="/auth" component={Auth} />
-      </Switch>
+      {routes}
     </div>
   );
 };

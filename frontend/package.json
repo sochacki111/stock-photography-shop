@@ -23,6 +23,7 @@
     "react-stripe-checkout": "^2.6.3",
     "react-toastify": "^6.2.0",
     "redux-thunk": "^2.3.0",
+    "stripe": "^8.131.1",
     "typescript": "^3.9.7"
   },
   "scripts": {
