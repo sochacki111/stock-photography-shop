@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
+import axios from '../../axios-photos';
 import { Link } from 'react-router-dom';
 import { fetchPhoto, updatePhoto } from '../../store/actions/photo';
 import './EditPhoto.module.css';

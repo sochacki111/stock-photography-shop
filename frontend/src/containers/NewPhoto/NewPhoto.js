@@ -11,7 +11,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { DropzoneArea } from 'material-ui-dropzone';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
+import axios from '../../axios-photos';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import * as actions from '../../store/actions/index';
 

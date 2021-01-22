@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../../axios-photos';
 import * as actionTypes from './actionTypes';
 import { toast } from 'react-toastify';
 
@@ -48,9 +48,9 @@ export const auth = (email, password, isSignup) => {
       email: email,
       password: password
     };
-    let url = 'http://localhost:8080/signup';
+    let url = '/signup';
     if (!isSignup) {
-      url = 'http://localhost:8080/signin';
+      url = '/signin';
     }
     try {
       const { data } = await axios.post(url, authData);

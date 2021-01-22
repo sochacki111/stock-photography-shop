@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import axios from 'axios';
+import axios from '../../axios-photos';
 import { RouteComponentProps, Link } from 'react-router-dom';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridList from '@material-ui/core/GridList';
@@ -42,9 +42,7 @@ class MyPhotos extends Component<IProps, IState> {
 
   async fetchPhotos() {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/users/${this.props.userId}/photos`
-      );
+      const response = await axios.get(`/users/${this.props.userId}/photos`);
       this.setState({ photos: response.data });
     } catch (err) {
       this.setState({ error: true });

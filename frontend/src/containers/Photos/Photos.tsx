@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import axios from 'axios';
+import axios from '../../axios-photos';
 import { RouteComponentProps, Link } from 'react-router-dom';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
@@ -69,7 +69,7 @@ class Photos extends Component<IProps, IState> {
         headers: { Authorization: `Bearer ${this.props.token}` }
       };
       const response = await axios.get(
-        `http://localhost:8080/photos?category=${this.state.category}&searchKeyword=${this.state.searchKeyword}&sortOrder=${this.state.sortOrder}`,
+        `/photos?category=${this.state.category}&searchKeyword=${this.state.searchKeyword}&sortOrder=${this.state.sortOrder}`,
         config
       );
       const photos = response.data;

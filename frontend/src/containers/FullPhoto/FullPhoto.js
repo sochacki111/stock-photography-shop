@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
+import axios from '../../axios-photos';
 import { loadStripe } from '@stripe/stripe-js';
 import { fetchPhoto } from '../../store/actions/photo';
 import './FullPhoto.module.css';
@@ -39,7 +39,7 @@ const FullPhoto = (props) => {
         headers: { Authorization: `Bearer ${token}` }
       };
       const { data } = await axios.post(
-        'http://localhost:8080/photos/create-session',
+        '/photos/create-session',
         { photo: loadedPhoto },
         config
       );

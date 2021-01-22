@@ -30,10 +30,7 @@ export const fetchPhoto = (photoId) => async (dispatch, getState) => {
     headers: { Authorization: `Bearer ${token}` }
   };
   try {
-    const { data } = await axios.get(
-      'http://localhost:8080/photos/' + photoId,
-      config
-    );
+    const { data } = await axios.get('/photos/' + photoId, config);
     dispatch(fetchPhotoSuccess(data));
   } catch (err) {
     dispatch(fetchPhotoFail(err));
