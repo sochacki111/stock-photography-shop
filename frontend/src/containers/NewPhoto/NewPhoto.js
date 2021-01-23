@@ -76,15 +76,7 @@ const NewPhoto = (props) => {
       fd.append('price', String(price));
       // TODO Refine redirect AFTER successful photo create. Right now it's just redirecting
       await onAddPhoto(fd, token);
-      toast.success(`Photo: "${title}" uploaded!`, {
-        position: 'top-center',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined
-      });
+      toast.success(`Photo: "${title}" uploaded!`);
       props.history.push('/');
     }
   };
