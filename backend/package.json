@@ -8,9 +8,6 @@
     "dev": "nodemon src/server/server.ts",
     "dev2": "concurrently \"npm run dev\" \"cd ../frontend && npm start\"",
     "build": "tsc -p .",
-    "build2": "cd client && npm run build",
-    "install-client": "cd client && npm install",
-    "heroku-postbuild": "npm run install-client && npm run build2",
     "test": "echo \"Error: no test specified\" && exit 1",
     "tsc": "tsc"
   },
