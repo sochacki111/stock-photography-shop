@@ -58,7 +58,8 @@ class Auth extends Component {
         elementType: 'input',
         elementConfig: {
           type: 'password',
-          placeholder: 'Password'
+          placeholder: 'Password',
+          minlength: 6
         },
         value: 'password',
         validation: {

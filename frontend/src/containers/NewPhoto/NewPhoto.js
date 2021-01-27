@@ -85,7 +85,7 @@ const NewPhoto = (props) => {
 
   return (
     <div className={classes.form}>
-      <h1>Upload photo</h1>
+      <h1>New photo</h1>
       <FormGroup>
         <DropzoneArea
           className={classes.dropZone}

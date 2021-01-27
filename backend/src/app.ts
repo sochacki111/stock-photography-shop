@@ -50,6 +50,7 @@ passport.use(AnonymousStrategy);
 app.set('port', process.env.PORT || 8080);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+// TODO Delete
 if (process.env.NODE_ENV === 'production') {
   console.log('hello very world');
 
