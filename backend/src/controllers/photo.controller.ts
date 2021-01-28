@@ -208,6 +208,8 @@ export const createStripeCheckoutSession = async (
   res: Response,
   next: NextFunction
 ): Promise<Response> => {
+  console.log('hello world from createStripeCheckoutSession');
+  
   const { user } = req;
   const customerEmail = user ? { customer_email: user.email } : {};
   try {
