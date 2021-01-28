@@ -35,3 +35,6 @@ if (!MONGODB_URI) {
 export const STRIPE_SECRET_ACCESS_KEY = String(
   process.env.STRIPE_SECRET_ACCESS_KEY
 );
+
+export const FRONTEND_DOMAIN =
+  process.env.FRONTEND_DOMAIN || 'http://localhost:3000';

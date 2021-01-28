@@ -7,6 +7,7 @@ import logger from '../util/logger';
 import s3 from '../config/s3.config';
 import User from '../models/user';
 import stripe from '../config/stripe';
+import { FRONTEND_DOMAIN } from '../util/secrets';
 
 declare global {
   namespace Express {
@@ -208,8 +209,6 @@ export const createStripeCheckoutSession = async (
   res: Response,
   next: NextFunction
 ): Promise<Response> => {
-  console.log('hello world from createStripeCheckoutSession');
-  
   const { user } = req;
   const customerEmail = user ? { customer_email: user.email } : {};
   try {
@@ -231,10 +230,8 @@ export const createStripeCheckoutSession = async (
       ...customerEmail,
       mode: 'payment',
       // success_url: `${YOUR_DOMAIN}?success=true`,
-      // success_url: `${process.env.DOMAIN}/photos/${req.body.photo._id}`,
-      // cancel_url: `${process.env.DOMAIN}/photos/${req.body.photo._id}`
-      success_url: `https://google.com`,
-      cancel_url: `https://google.com`
+      success_url: `${FRONTEND_DOMAIN}/photos/${req.body.photo._id}`,
+      cancel_url: `${FRONTEND_DOMAIN}/photos/${req.body.photo._id}`
     });
 
     return res.status(200).json({ id: session.id });
