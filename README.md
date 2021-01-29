@@ -1,20 +1,21 @@
-# stock-photography-prototype
+# stock-photography-shop
 👉 https://stock-photography-shop.netlify.app 👈
 ## Description
-Online shop with stock photographies. Fullstack RESTful CRUD app. It uses AWS S3 Service for photo storing
+Online shop with stock photographies. Fullstack RESTful CRUD app. It uses AWS S3 Service for photo storing and Stripe for payments.
 
 ## Tech stack
 # backend
-- node
-- express
-- passport (authorization)
-- pino (loging)
-- mongoDB
-- typescript
+- AWS S3 integration ✅
+- Stripe integration ✅
+- Express.js ✅
+- MongoDB ✅
+- TypeScript ✅
+- passport (authorization) ✅
+- pino, morgan (logging) ✅
 
 # frontend
-- react
-- redux
+- React ✅
+- redux ✅
 
 ## Requirements for running the app:
 1. Clone repo
