@@ -3,8 +3,7 @@
 ## Description
 Online shop with stock photographies. Fullstack RESTful CRUD app. It uses AWS S3 Service for photo storing and Stripe for payments.
 
-## Tech stack
-# backend
+# Backend
 - AWS S3 integration ✅
 - Stripe integration ✅
 - Express.js ✅
@@ -13,9 +12,14 @@ Online shop with stock photographies. Fullstack RESTful CRUD app. It uses AWS S3
 - passport (authorization) ✅
 - pino, morgan (logging) ✅
 
-# frontend
+# Frontend
 - React ✅
 - redux ✅
+
+# Screenshots
+![Image](frontend/public/assets/screenshots/myphotos.PNG)
+![Image](frontend/public/assets/screenshots/new-photo.PNG)
+![Image](frontend/public/assets/screenshots/photo-description-view.PNG)
 
 ## Requirements for running the app:
 1. Clone repo
