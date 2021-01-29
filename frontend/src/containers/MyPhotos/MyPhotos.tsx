@@ -78,6 +78,9 @@ class MyPhotos extends Component<IProps, IState> {
 
     return (
       <div>
+        {this.state.photos.length === 0 && (
+          <p style={{ marginTop: '15vh' }}>No Photos Found</p>
+        )}
         <section className="Photos">{photos}</section>
       </div>
     );

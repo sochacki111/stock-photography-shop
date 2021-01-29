@@ -54,7 +54,10 @@ export const auth = (email, password, isSignup) => {
     }
     try {
       const { data } = await axios.post(url, authData);
-      toast.success(`User: "${email}" has been created!`);
+      const toastMsg = isSignup
+        ? `User: "${email}" has been created!`
+        : `Welcome ${email}!`;
+      toast.success(toastMsg);
       const expirationDate = new Date(
         new Date().getTime() + data.expiresIn * 1000
       );

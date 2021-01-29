@@ -3,6 +3,7 @@ import { updateObject } from '../utility';
 
 const initialState = {
   photo: null,
+  photos: [],
   loading: false,
   success: false,
   error: null,
@@ -92,6 +93,12 @@ const reducer = (state = initialState, action) => {
       return fetchPhotoSuccess(state, action);
     case actionTypes.FETCH_PHOTO_FAIL:
       return fetchPhotoFail(state, action);
+    // case actionTypes.FETCH_PHOTOS_START:
+    //   return fetchPhotosStart(state, action);
+    // case actionTypes.FETCH_PHOTOS_SUCCESS:
+    //   return fetchPhotosSuccess(state, action);
+    // case actionTypes.FETCH_PHOTOS_FAIL:
+    //   return fetchPhotosFail(state, action);
     case actionTypes.UPDATE_PHOTO_REQUEST:
       return updatePhotoRequest(state, action);
     case actionTypes.UPDATE_PHOTO_SUCCESS:
