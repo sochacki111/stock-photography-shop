@@ -14,7 +14,7 @@ Online shop with stock photographies. Fullstack RESTful CRUD app. It uses AWS S3
 
 # Frontend
 - React ✅
-- redux ✅
+- Redux ✅
 
 # Screenshots
 ![Image](frontend/public/assets/screenshots/myphotos.PNG)
