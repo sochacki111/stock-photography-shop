@@ -6,9 +6,9 @@ Online shop with stock photographies. Fullstack RESTful CRUD app. It uses AWS S3
 # Backend
 - AWS S3 integration ✅
 - Stripe integration ✅
+- TypeScript ✅
 - Express.js ✅
 - MongoDB ✅
-- TypeScript ✅
 - Passport.js (authorization) ✅
 - pino, morgan (logging) ✅
 
