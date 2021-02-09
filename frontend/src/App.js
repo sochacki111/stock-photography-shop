@@ -40,8 +40,8 @@ const App = () => {
         <Route path="/new-photo" component={NewPhoto} />
         <Route path="/my-photos" component={MyPhotos} />
         <Route path="/logout" component={Logout} />
-        <Route path="/photos/:id" component={FullPhoto} />
         <Route path="/photos/edit/:id" component={EditPhoto} />
+        <Route path="/photos/:id" component={FullPhoto} />
         <Route path="/" exact component={Photos} />
         <Redirect to="/" />
       </Switch>
